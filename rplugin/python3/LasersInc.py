@@ -72,7 +72,7 @@ class LasersInc(object):
 
 
 
-    @pynvim.autocmd('User', pattern='GameTick', eval='expand("<afile>")', sync=True)
+    @pynvim.autocmd('User', pattern='GameTick', sync=True)
     def on_game_tick(self, *args):
         self.frame_num += 1
         self.frame_buf = self.EMPTY_BUF.copy()
