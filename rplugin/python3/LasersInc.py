@@ -1,11 +1,14 @@
 
 import pynvim
 from time import sleep
+from numpy import inf
 
 import builtins
 
 GAME_WIDTH = 80
 GAME_HEIGHT = 18
+
+TARGET_FPS = 20
 
 @pynvim.plugin
 class LasersInc(object):
@@ -14,7 +17,6 @@ class LasersInc(object):
         self.nvim = nvim
 
         self.frame_num = 0
-        self.TARGET_FPS = 20
 
         self.frame_buf = []
         self.EMPTY_BUF = []
@@ -48,7 +50,7 @@ class LasersInc(object):
         self.running = True
         while self.running:
             self.nvim.command('doautocmd User GameTick')
-            sleep(1 / self.TARGET_FPS)
+            sleep(1 / TARGET_FPS)
 
 
     @pynvim.command('LasersIncStop')
@@ -83,6 +85,9 @@ class LasersInc(object):
 
     def calc_updates(self):
         for entity in self.entities:
+            if entity.ttl < 0:
+                self.entities.remove(entity)
+                continue
 
             if isinstance(entity, Bullet):
                 if (entity.x + entity.dx < 0           or
@@ -119,13 +124,14 @@ class LasersInc(object):
 
 
 class Entity:
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, ttl=inf):
         self.x = x
         self.y = y
         self.dx = 0
         self.dy = 0
         self.width = width
         self.height = height
+        self.ttl = ttl
 
 
     def update(self):
@@ -172,7 +178,7 @@ class Spaceship(Entity):
 
 class Bullet(Entity):
     def __init__(self, x, y, dx, dy):
-        Entity.__init__(self, x, y, 1, 1)
+        Entity.__init__(self, x, y, 1, 1, ttl = TARGET_FPS * 4)
         self.dx = dx
         self.dy = dy
 
@@ -184,4 +190,6 @@ class Bullet(Entity):
         self.dy *= 0.8
         self.x += self.dx
         self.y += self.dy
+
+        self.ttl -= 1
 
