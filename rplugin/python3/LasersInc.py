@@ -104,6 +104,10 @@ class LasersInc(object):
     def accelerate_spaceship_right(self):
         self.spaceship.dx += 1
 
+    @pynvim.autocmd('User', pattern="Space_Pressed")
+    def shoot_player_bullet(self):
+        self.entities.append(self.spaceship.shoot_bullet())
+
 
 class Entity:
     def __init__(self, x, y, width, height):
@@ -137,6 +141,7 @@ class Entity:
 class Spaceship(Entity):
     def __init__(self):
         Entity.__init__(self, 0, 0, 3, 3)
+        self.bullets = []
 
     def sprite(self):
         return [
@@ -150,4 +155,23 @@ class Spaceship(Entity):
         self.dy *= 0.85
         Entity.update(self)
 
+    def shoot_bullet(self):
+        bullet = Bullet(self.x+3, self.y+1, 1, 0)
+        self.bullets.append(bullet)
+        return bullet
+
+
+class Bullet(Entity):
+    def __init__(self, x, y, dx, dy):
+        Entity.__init__(self, x, y, 1, 1)
+        self.dx = dx
+        self.dy = dy
+
+    def sprite(self):
+        return ["-"]
+
+    def update(self):
+        self.dx *= 0.98
+        self.dy *= 0.8
+        Entity.update(self)
 
