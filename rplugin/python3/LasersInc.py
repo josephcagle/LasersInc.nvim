@@ -83,6 +83,15 @@ class LasersInc(object):
 
     def calc_updates(self):
         for entity in self.entities:
+
+            if isinstance(entity, Bullet):
+                if (entity.x + entity.dx < 0           or
+                    entity.y + entity.dy < 0           or
+                    entity.x + entity.dx > GAME_WIDTH  or
+                    entity.y + entity.dy > GAME_HEIGHT   ):
+                    self.entities.remove(entity)
+                    continue
+
             entity.update()
 
     def draw_objects(self):
@@ -173,5 +182,6 @@ class Bullet(Entity):
     def update(self):
         self.dx *= 0.98
         self.dy *= 0.8
-        Entity.update(self)
+        self.x += self.dx
+        self.y += self.dy
 
