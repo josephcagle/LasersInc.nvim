@@ -56,15 +56,15 @@ class LasersInc(object):
 
 
     def render(self):
-        self.nvim.current.buffer[0:(self.GAME_HEIGHT-1)] = self.frame_buf
+        self.nvim.current.buffer[0:self.GAME_HEIGHT] = self.frame_buf
 
     def buf_draw(self, x, y, lines):
         x = round(x)
         y = round(y)
         for i in range(len(lines)):
-            new_screen_line = self.frame_buf[i][0:x]
+            new_screen_line = self.frame_buf[y+i][0:x]
             new_screen_line += lines[i]
-            new_screen_line += self.frame_buf[i][(x+len(lines[i])):]
+            new_screen_line += self.frame_buf[y+i][(x+len(lines[i])):]
             self.frame_buf[y+i] = new_screen_line
             # chars = list(lines[i])
             # for j in range(len(chars)):
