@@ -4,6 +4,9 @@ from time import sleep
 
 import builtins
 
+GAME_WIDTH = 80
+GAME_HEIGHT = 18
+
 @pynvim.plugin
 class LasersInc(object):
 
@@ -13,12 +16,10 @@ class LasersInc(object):
         self.frame_num = 0
         self.TARGET_FPS = 20
 
-        self.GAME_WIDTH = 80
-        self.GAME_HEIGHT = 18
         self.frame_buf = []
         self.EMPTY_BUF = []
-        for i in builtins.range(self.GAME_HEIGHT):
-            self.EMPTY_BUF.append(" "*self.GAME_WIDTH)
+        for i in builtins.range(GAME_HEIGHT):
+            self.EMPTY_BUF.append(" "*GAME_WIDTH)
 
         self.running = False
 
@@ -56,7 +57,7 @@ class LasersInc(object):
 
 
     def render(self):
-        self.nvim.current.buffer[0:self.GAME_HEIGHT] = self.frame_buf
+        self.nvim.current.buffer[0:GAME_HEIGHT] = self.frame_buf
 
     def buf_draw(self, x, y, lines):
         x = round(x)
@@ -82,20 +83,7 @@ class LasersInc(object):
 
     def calc_updates(self):
         for entity in self.entities:
-            entity.x += entity.dx
-            entity.y += entity.dy
-            if entity.x < 0:
-                entity.x = 0
-                entity.dx = 0
-            elif entity.x + entity.width > self.GAME_WIDTH:
-                entity.x = self.GAME_WIDTH - entity.width
-                entity.dx = 0
-            if entity.y < 0:
-                entity.y = 0
-                entity.dy = 0
-            elif entity.y + entity.height > self.GAME_HEIGHT:
-                entity.y = self.GAME_HEIGHT - entity.height
-                entity.dy = 0
+            entity.update()
 
     def draw_objects(self):
         self.buf_draw(0, 0, ['frame %s' % self.frame_num])
@@ -126,9 +114,25 @@ class Entity:
         self.width = width
         self.height = height
 
+
+    def update(self):
+        self.x += self.dx
+        self.y += self.dy
+        if self.x < 0:
+            self.x = 0
+            self.dx = 0
+        elif self.x + self.width > GAME_WIDTH:
+            self.x = GAME_WIDTH - self.width
+            self.dx = 0
+        if self.y < 0:
+            self.y = 0
+            self.dy = 0
+        elif self.y + self.height > GAME_HEIGHT:
+            self.y = GAME_HEIGHT - self.height
+            self.dy = 0
+
     def sprite(self):
         raise NotImplementedError()
-
 
 class Spaceship(Entity):
     def __init__(self):
@@ -141,5 +145,9 @@ class Spaceship(Entity):
                 ">  "
                 ]
 
+    def update(self):
+        self.dx *= 0.95
+        self.dy *= 0.85
+        Entity.update(self)
 
 
