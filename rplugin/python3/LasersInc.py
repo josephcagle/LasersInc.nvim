@@ -165,7 +165,7 @@ class Spaceship(Entity):
         Entity.update(self)
 
     def shoot_bullet(self):
-        bullet = Bullet(self.x+3, self.y+1, 1, 0)
+        bullet = Bullet(self.x+3, self.y+1,  self.dx+1, self.dy)
         self.bullets.append(bullet)
         return bullet
 
