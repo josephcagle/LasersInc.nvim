@@ -1,0 +1,18 @@
+
+if !has("python3")
+    echoerr "Python 3 support required. Exiting"
+    finish
+endif
+
+" add cwd to runtimepath
+let &runtimepath.=','.escape(expand('<sfile>:p:h'), '\,')
+" register our python code
+autocmd VimEnter * call s:startTheGame()
+
+function s:startTheGame()
+    UpdateRemotePlugins
+    echo " "
+
+    LasersInc
+endfunction
+
