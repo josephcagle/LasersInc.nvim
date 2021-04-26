@@ -9,6 +9,15 @@ let &runtimepath.=','.escape(expand('<sfile>:p:h'), '\,')
 " register our python code
 autocmd VimEnter * call s:startTheGame()
 
+" set up controls
+nnoremap <silent> h :doautocmd User h_Pressed<CR>
+nnoremap <silent> j :doautocmd User j_Pressed<CR>
+nnoremap <silent> k :doautocmd User k_Pressed<CR>
+nnoremap <silent> l :doautocmd User l_Pressed<CR>
+nnoremap <silent> o :doautocmd User o_Pressed<CR>
+nnoremap <silent> O :doautocmd User O_Pressed<CR>
+nnoremap <silent> <Space> :doautocmd User Space_Pressed<CR>
+
 function s:startTheGame()
     UpdateRemotePlugins
     echo " "
