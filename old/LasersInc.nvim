@@ -1,0 +1,559 @@
+
+" if exists("g:loaded_lasersinc")
+"     finish
+" endif
+" let g:loaded_lasersinc = 1
+
+"function Go()
+"    source LasersInc.nvim
+"    call LasersInc()
+"endfunction
+"nnoremap <silent> <C-g> :call Go()<CR>
+"DisableWhitespace
+
+function! LasersInc() abort
+    call s:init()
+    call s:main()
+endfunction
+
+
+    " set virtualedit=all
+    set nonumber
+    " let l:allLetters = map(range(char2nr('A'),char2nr('z')),'nr2char(v:val)')
+    " for l:letter in l:allLetters
+    "     execute "map " . l:letter . " <Nop>"
+    " endfor
+function! s:init()
+
+endfunction
+
+
+" lots of data
+"
+let s:GAME_WIDTH = 80
+let s:GAME_HEIGHT = 20
+
+let s:SPACESHIP_WIDTH = 3
+let s:SPACESHIP_HEIGHT = 3
+let s:spaceshipPicture = ["\\>",
+                        \ "==>" ,
+                        \ "/>" ]
+
+
+
+let s:gameOver = v:false
+let s:gamePaused = v:false
+let s:gameFrozen = v:false
+
+let s:frameCount = 0
+
+let s:spaceship_x = 5.0
+let s:spaceship_y = (s:GAME_HEIGHT / 2.0) - (s:SPACESHIP_HEIGHT / 2.0)
+let s:spaceship_dx = 0.0
+let s:spaceship_dy = 0.0
+
+let s:playerLives = 3
+
+let s:topLaser = v:false
+let s:bottomLaser = v:false
+let s:laserCharge = 0.0
+
+" a bullet is [x, y, dx, dy]
+let s:bullets = []
+" an explosion is [x, y, ttl]
+let s:explosions = []
+
+
+let s:timerId = 0
+function! s:main()
+    call s:addControls()
+    call s:updateStatusBar()
+
+    let s:timerId = timer_start(50, 'TriggerGameTick', { 'repeat': -1 })
+    augroup exit
+        autocmd!
+        autocmd VimLeave * call timer_stop(s:timerId)
+    augroup END
+
+    " reset variables
+    let s:gameOver = v:false
+    let s:gamePaused = v:false
+    let s:frameCount = 0
+    let s:playerLives = 3
+    call s:resetEntities()
+endfunction
+
+function! s:resetEntities()
+    let s:spaceship_x = 5.0
+    let s:spaceship_y = (s:GAME_HEIGHT / 2.0) - (s:SPACESHIP_HEIGHT / 2.0)
+    let s:spaceship_dx = 0.0
+    let s:spaceship_dy = 0.0
+    let s:topLaser = v:false
+    let s:bottomLaser = v:false
+    let s:laserCharge = 0.0
+    let s:bullets = []
+    let s:explosions = []
+endfunction
+
+function! TriggerGameTick(...)
+    doautocmd User Gametick
+endfunction
+
+augroup render
+    autocmd!
+    autocmd User GameTick call s:render()
+augroup END
+
+function! s:render()
+    call s:clearScreen()
+    call s:drawFrame()
+    normal! G0
+endfunction
+
+function! PauseGame()
+    call timer_pause(s:timerId, v:true)
+    let s:gamePaused = v:true
+    call s:draw(s:GAME_WIDTH/2 - 5, s:GAME_HEIGHT/2 - 1.5,
+                \["|--------|",
+                \ "| PAUSED |",
+                \ "|--------|" ])
+    normal! G0
+endfunction
+
+function! UnpauseGame()
+    if !s:gameFrozen
+        call timer_pause(s:timerId, v:false)
+    endif
+    let s:gamePaused = v:false
+endfunction
+
+function! TogglePause()
+    if s:gamePaused
+        call UnpauseGame()
+    else
+        call PauseGame()
+    endif
+endfunction
+
+function! FreezeGame()
+    call timer_pause(s:timerId, v:true)
+    let s:gameFrozen = v:true
+endfunction
+
+function! UnfreezeGame()
+    if !s:gamePaused
+        call timer_pause(s:timerId, v:false)
+    endif
+    let s:gameFrozen = v:false
+endfunction
+
+function! ToggleFreeze()
+    if s:gameFrozen
+        call UnfreezeGame()
+    else
+        call FreezeGame()
+    endif
+endfunction
+
+
+function! s:doGameOver()
+    call s:disableControls()
+    let s:gameOver = v:true
+    call s:updateStatusBar()
+    normal! G0
+    call timer_start(2000, 'StopGame')
+endfunction
+
+function! StopGame(...)
+    call timer_stop(s:timerId)
+
+    " call s:disableControls()
+endfunction
+
+
+function! s:addControls()
+    nnoremap <silent> h :call AccelerateSpaceshipLeft()<CR>
+    nnoremap <silent> j :call AccelerateSpaceshipDown()<CR>
+    nnoremap <silent> k :call AccelerateSpaceshipUp()<CR>
+    nnoremap <silent> l :call AccelerateSpaceshipRight()<CR>
+    nnoremap <silent> <Space> :call ShootPlayerBullet()<CR>
+    nnoremap <silent> O :call ToggleTopLaser()<CR>
+    nnoremap <silent> o :call ToggleBottomLaser()<CR>
+
+    " disable key repeat
+    " set timeoutlen=40
+    " nnoremap <silent> hh <Nop>
+    " nnoremap <silent> jj <Nop>
+    " nnoremap <silent> kk <Nop>
+    " nnoremap <silent> ll <Nop>
+
+    nnoremap <silent> <C-p> :call TogglePause()<CR>
+
+    nnoremap <silent> <C-q> :call StopGame()<CR>
+endfunction
+
+function! s:disableControls()
+    nunmap h
+    nunmap j
+    nunmap k
+    nunmap l
+    nunmap <Space>
+    nunmap O
+    nunmap o
+    nunmap <C-p>
+endfunction
+
+
+
+let s:lineOfSpaces = repeat(" ", s:GAME_WIDTH)
+let s:emptyLines = repeat([s:lineOfSpaces], s:GAME_HEIGHT)
+
+function! s:clearScreen()
+    " execute "normal! ggVGdS\<Esc>"
+    " execute "normal! yy" . s:GAME_HEIGHT-1 . "p"
+
+    call nvim_buf_set_lines(0, 0, s:GAME_HEIGHT, v:false, s:emptyLines)
+endfunction
+
+function! s:drawFrame()
+    normal! gg0
+    call s:updateBackgroundImage()
+    call s:drawBackgroundImage()
+    call s:draw(0,0, ["frames: " . s:frameCount])
+    call s:draw(0,1, ["laserCharge: " . string(s:laserCharge)])
+    call s:drawSpaceship()
+    call s:drawBullets()
+    call s:drawExplosions()
+    let s:frameCount += 1
+    if s:gameOver
+        call s:draw(s:GAME_WIDTH/2 - 6.5, s:GAME_HEIGHT/2 - 1.5,
+                    \["|-----------|",
+                    \ "| GAME OVER |",
+                    \ "|-----------|" ])
+    endif
+endfunction
+
+
+function! s:random(n)
+    return luaeval("math.random(" . a:n . ")") - 1
+endfunction
+
+" three, for parallax effect
+let s:backgroundImages = []
+for s:_ in range(3)
+    call add(s:backgroundImages, deepcopy(s:emptyLines))
+endfor
+
+function! s:getNextSpacePixel()
+    if s:random(400)
+        return " "
+    endif
+    return "."
+endfunction
+
+function! s:updateBackgroundImage()
+    if s:frameCount % 1 == 0
+        for l:i in range(len(s:backgroundImages[0]))
+            let s:backgroundImages[0][l:i] =
+                        \ strcharpart(s:backgroundImages[0][l:i], 1) . s:getNextSpacePixel()
+        endfor
+    endif
+    if s:frameCount % 2 == 0
+        for l:i in range(len(s:backgroundImages[1]))
+            let s:backgroundImages[1][l:i] =
+                        \ strcharpart(s:backgroundImages[1][l:i], 1) . s:getNextSpacePixel()
+        endfor
+    endif
+    if s:frameCount % 4 == 0
+        for l:i in range(len(s:backgroundImages[2]))
+            let s:backgroundImages[2][l:i] =
+                        \ strcharpart(s:backgroundImages[2][l:i], 1) . s:getNextSpacePixel()
+        endfor
+    endif
+endfunction
+let s:oldFrameCount = s:frameCount
+let s:frameCount = 1*2*4
+for s:_ in range(s:GAME_WIDTH)
+    call s:updateBackgroundImage()
+endfor
+let s:frameCount = s:oldFrameCount
+
+function s:drawBackgroundImage()
+    for l:img in s:backgroundImages
+        call s:draw(0,0, l:img, "transparent")
+        " call s:draw(0,0, l:img)
+    endfor
+    " call s:draw(0, 0, s:backgroundImages[1])
+endfunction
+
+
+function! s:draw(x, y, lines, ...)
+    let l:x = float2nr(round(a:x))
+    let l:y = float2nr(round(a:y))
+
+    for l:i in range(len(a:lines))
+        if l:y + l:i + 1 > s:GAME_HEIGHT
+            return
+        endif
+        let l:oldLine = getline(l:y+l:i+1)
+
+        let l:chars2draw = split(a:lines[l:i], '\zs')
+        if (a:0 > 0) && a:1 ==? "transparent"
+            for l:j in range(len(l:chars2draw))
+                if l:chars2draw[l:j] == " "
+                    let l:chars2draw[l:j] = strpart(l:oldLine, l:x+l:j+1, 1)
+                endif
+            endfor
+        endif
+        let l:newLine = strpart(l:oldLine, 0,l:x)
+        let l:newLine .= join(l:chars2draw, '')
+        let l:newLine .= strpart(l:oldLine, l:x+len(a:lines[l:i]))
+
+        call setline(l:y+l:i+1, l:newLine)
+    endfor
+endfunction
+
+
+function! s:areIntersecting(a_x1, a_y1, a_x2, a_y2, b_x1, b_y1, b_x2, b_y2)
+    " check each point in b to see if it is inside a
+
+    for l:b_point in [[a:b_x1, a:b_y1], [a:b_x2, a:b_y1], [a:b_x1, a:b_y2], [a:b_x2, a:b_y2]]
+        if a:a_x1 < l:b_point[0] && l:b_point[0] < a:a_x2
+            if a:a_y1 < l:b_point[1] && l:b_point[1] < a:a_y2
+                return v:true
+            endif
+        endif
+    endfor
+
+    return v:false
+endfunction
+
+
+function! s:loseALife()
+    let s:playerLives -= 1
+    if s:playerLives == 0
+        call s:doGameOver()
+    else
+        " call FreezeGame()
+        call s:disableControls()
+        function! Callback(...)
+            call s:resetEntities()
+            call s:updateStatusBar()
+            call s:addControls()
+            " call UnfreezeGame()
+        endfunction
+        call timer_start(1500, 'Callback')
+    endif
+endfunction
+
+
+highlight StatusLine ctermfg=DarkGray ctermbg=White
+highlight StatusLineTitle ctermfg=Black ctermbg=Gray
+highlight StatusLineRed ctermfg=DarkRed ctermbg=Gray
+highlight StatusLineGreen ctermfg=Green ctermbg=Gray
+function! s:updateStatusBar()
+    if s:gameOver
+        set statusline=%#StatusLine#\ %#StatusLineRed#\ Game\ Over\ %#StatusLine#
+    else
+        let l:hearts = join(repeat(["♥︎"], s:playerLives) + repeat(["♡"], 3 - s:playerLives), '\ ')
+        set statusline=%#StatusLine#\ %#StatusLineTitle#\ Lives:\ %#StatusLineRed#
+        execute "set statusline+=" . l:hearts
+        set statusline+=\ %#StatusLine#
+        set statusline+=%=
+        set statusline+=%#StatusLineTitle#\ Capacitor\ Charge\ %#StatusLineGreen#
+        let l:level = float2nr(round(s:laserCharge/8))
+        execute "set statusline+=" . repeat('\ ', 8 - l:level)
+        execute "set statusline+=" . repeat("]", l:level)
+        execute 'set statusline+=\ %#StatusLine#\ '
+    endif
+endfunction
+
+
+augroup updateSpaceship
+    autocmd!
+    autocmd User GameTick call s:updateSpaceship()
+augroup END
+
+function! s:updateSpaceship()
+    " add friction
+    let s:spaceship_dx *= 0.85
+    let s:spaceship_dy *= 0.8
+
+    " calculate position
+    let s:spaceship_x += s:spaceship_dx
+    let s:spaceship_y += s:spaceship_dy
+
+    " stop at edge of screen
+    if s:spaceship_x < 0
+        let s:spaceship_x = 0.0
+        let s:spaceship_dx = 0.0
+    elseif s:spaceship_x > s:GAME_WIDTH - s:SPACESHIP_WIDTH
+        let s:spaceship_x = s:GAME_WIDTH - s:SPACESHIP_WIDTH
+        let s:spaceship_dx = 0.0
+    endif
+    if s:spaceship_y < 0
+        let s:spaceship_y = 0
+        let s:spaceship_dy = 0.0
+    elseif s:spaceship_y > s:GAME_HEIGHT - s:SPACESHIP_HEIGHT
+        let s:spaceship_y = s:GAME_HEIGHT - s:SPACESHIP_HEIGHT
+        let s:spaceship_dy = 0.0
+    endif
+endfunction
+
+
+function! s:drawSpaceship()
+    call s:draw(s:spaceship_x, s:spaceship_y, s:spaceshipPicture)
+    if s:topLaser
+        call s:drawLaserFrom(s:spaceship_x+2, s:spaceship_y)
+    endif
+    if s:bottomLaser
+        call s:drawLaserFrom(s:spaceship_x+2, s:spaceship_y+2)
+    endif
+endfunction
+
+function! s:drawLaserFrom(x, y)
+    let l:x = float2nr(round(a:x))
+    let l:y = float2nr(round(a:y))
+
+    execute "normal! " . (l:y+1) . "G" . (l:x+1) . "|"
+    execute "normal! " . "gRX" . repeat("=", (s:GAME_WIDTH - (l:x+1)))
+endfunction
+
+
+
+function! AccelerateSpaceshipLeft()
+    if s:gamePaused
+        return
+    endif
+    let s:spaceship_dx -= 1.0
+endfunction
+
+function! AccelerateSpaceshipDown()
+    if s:gamePaused
+        return
+    endif
+    let s:spaceship_dy += 1.0
+endfunction
+
+function! AccelerateSpaceshipUp()
+    if s:gamePaused
+        return
+    endif
+    let s:spaceship_dy -= 1.0
+endfunction
+
+function! AccelerateSpaceshipRight()
+    if s:gamePaused
+        return
+    endif
+    let s:spaceship_dx += 1.0
+endfunction
+
+function! ToggleTopLaser()
+    if s:gamePaused
+        return
+    endif
+    if !s:topLaser && s:laserCharge <= 0
+        return
+    endif
+    let s:topLaser = !s:topLaser
+endfunction
+function! ToggleBottomLaser()
+    if s:gamePaused
+        return
+    endif
+    if !s:bottomLaser && s:laserCharge <= 0
+        return
+    endif
+    let s:bottomLaser = !s:bottomLaser
+endfunction
+
+
+function! ShootPlayerBullet()
+    if s:gamePaused
+        return
+    endif
+    call add( s:bullets, [(s:spaceship_x + 3), (s:spaceship_y + 1),
+                          \ s:spaceship_dx+5,
+                          \ s:spaceship_dy] )
+endfunction
+
+augroup bullets
+    autocmd!
+    autocmd User GameTick call s:updateBullets()
+augroup END
+
+function! s:updateBullets()
+    for l:i in range(len(s:bullets))
+        let l:bullet = s:bullets[l:i]
+
+        if s:areIntersecting(s:spaceship_x, s:spaceship_y,
+                           \ s:spaceship_x+s:SPACESHIP_WIDTH, s:spaceship_y+s:SPACESHIP_HEIGHT,
+                           \ l:bullet[0], l:bullet[1],
+                           \ l:bullet[0], l:bullet[1])
+            \ && l:bullet[2] < 0
+            call remove(s:bullets, l:i)
+            let s:explosions += [[l:bullet[0], l:bullet[1], 5]]
+            normal! G0
+            call s:loseALife()
+            return
+        endif
+
+        if l:bullet[0] > s:GAME_WIDTH || l:bullet[0] < 0
+                    \ || l:bullet[1] > s:GAME_HEIGHT || l:bullet[1] < 0
+            call remove(s:bullets, l:i)
+            return
+        endif
+
+        " weird almost-friction thing
+        let l:bullet[2] = ((l:bullet[2] - 2) * 0.8) + 2
+        let l:bullet[3] = l:bullet[3] * 0.8
+
+        let l:bullet[0] += l:bullet[2]
+        let l:bullet[1] += l:bullet[3]
+    endfor
+endfunction
+
+function! s:drawBullets()
+    for l:bulletPosition in s:bullets
+        call s:draw(l:bulletPosition[0], l:bulletPosition[1], ["-"])
+    endfor
+endfunction
+
+function! s:drawExplosions()
+    for l:i in range(len(s:explosions))
+        let l:explosion = s:explosions[l:i]
+        call s:draw(l:explosion[0], l:explosion[1], ["#"])
+        if l:explosion[2] == 0
+            call remove(s:explosions, l:i)
+        endif
+    endfor
+endfunction
+
+
+augroup laserCharge
+    autocmd!
+    autocmd User GameTick call s:updateLasers()
+augroup END
+
+function s:updateLasers()
+    if s:topLaser
+        let s:laserCharge -= 1
+        if s:laserCharge < 0
+            call ToggleTopLaser()
+        endif
+    endif
+    if s:bottomLaser
+        let s:laserCharge -= 1
+        if s:laserCharge < 0
+            call ToggleBottomLaser()
+        endif
+    endif
+
+    if (!s:topLaser) && (!s:bottomLaser) && (s:laserCharge < 64)
+        let s:laserCharge += 0.3
+    endif
+    call s:updateStatusBar()
+endfunction
+
+
