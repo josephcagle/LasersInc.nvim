@@ -64,6 +64,11 @@ class LasersInc(object):
     def buf_draw(self, x, y, lines, transparent=False):
         x = int(x)
         y = int(y)
+
+        if y + len(lines) > GAME_HEIGHT or \
+           x + len(max(lines, key=len)) > GAME_WIDTH:
+            raise Exception("cannot draw offscreen")
+
         for i in range(len(lines)):
             new_screen_line = self.frame_buf[y+i][0:x]
 
