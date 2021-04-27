@@ -119,7 +119,6 @@ class LasersInc(object):
                     entity.x > GAME_WIDTH  or
                     entity.y > GAME_HEIGHT   ):
                     self.entities.remove(entity)
-                    continue
 
 
     def draw_objects(self):
