@@ -8,7 +8,7 @@ import builtins
 GAME_WIDTH = 80
 GAME_HEIGHT = 18
 
-TARGET_FPS = 20
+TARGET_FPS = 30
 
 @pynvim.plugin
 class LasersInc(object):
