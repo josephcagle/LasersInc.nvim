@@ -72,7 +72,7 @@ class LasersInc(object):
 
         if y + len(lines) > GAME_HEIGHT or \
            x + len(max(lines, key=len)) > GAME_WIDTH:
-            raise Exception("cannot draw offscreen")
+            raise Exception(f"cannot draw offscreen (at {x}, {y})")
 
         for i in range(len(lines)):
             new_screen_line = self.frame_buf[y+i][0:x]
