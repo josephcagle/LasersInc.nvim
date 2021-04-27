@@ -90,9 +90,9 @@ class LasersInc(object):
     def on_game_tick(self, *args):
         self.frame_num += 1
         self.frame_buf = self.EMPTY_BUF.copy()
-        self.calc_updates()
         self.draw_objects()
         self.render()
+        self.calc_updates()
 
 
     def calc_updates(self):
