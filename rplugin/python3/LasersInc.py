@@ -27,6 +27,7 @@ class LasersInc(object):
 
         self.entities = []
         self.spaceship = None
+        self.background_layers = []
 
 
     @pynvim.command('LasersInc', nargs='*', range='', sync=False)
@@ -46,6 +47,10 @@ class LasersInc(object):
         self.entities = []
         self.spaceship = Spaceship()
         self.entities.append(self.spaceship)
+
+        self.background_layers = []
+        for i in builtins.range(4):
+            self.background_layers.append(Starfield(1 + i*1.2))
 
         self.running = True
         while self.running:
@@ -98,6 +103,9 @@ class LasersInc(object):
     def calc_updates(self):
         delta_multiplier = 1.0  # TODO: calculate based on real UPS
 
+        for i in range(len(self.background_layers)):
+            self.background_layers[i].scroll(delta_multiplier)
+
         for entity in self.entities:
             if entity.ttl < 0:
                 self.entities.remove(entity)
@@ -114,6 +122,9 @@ class LasersInc(object):
             entity.update(delta_multiplier)
 
     def draw_objects(self):
+        for i in range(len(self.background_layers)):
+            self.buf_draw(0, 0, self.background_layers[i].lines(), transparent=True)
+
         self.buf_draw(0, 0, ['frame %s' % self.frame_num])
         for entity in self.entities:
             self.buf_draw(entity.x,
@@ -210,4 +221,53 @@ class Bullet(Entity):
         self.y += self.dy * delta_multiplier
 
         self.ttl -= 1 * delta_multiplier
+
+
+
+class Background:
+    def lines(self):
+        raise NotImplementedError()
+
+class ParallaxBackground(Background):
+    def __init__(self, parallax_distance):
+        self.parallax_distance = parallax_distance
+
+    # this method handles parallax_distance calculations
+    def moveCameraRight(self):
+        raise NotImplementedError()
+
+from math import sqrt
+class Starfield(ParallaxBackground):
+    def __init__(self, parallax_distance):
+        self.parallax_distance = parallax_distance
+        self.buf = []
+        self.scroll_x = 0
+
+        # generate starfield
+        for i in range(GAME_HEIGHT):
+            line = ""
+            for j in range(GAME_WIDTH):
+                line += ("." if sometimes(0.002 * sqrt(self.parallax_distance)) else " ")
+            self.buf.append(line)
+
+
+    def scroll(self, distance):
+        transformed_distance = distance / self.parallax_distance
+        scroll_n_pixels = round(self.scroll_x + transformed_distance) - round(self.scroll_x)
+
+        # scroll n characters over
+        for i in range(scroll_n_pixels):
+            for j in range(len(self.buf)):
+                self.buf[j] = self.buf[j][1:] + ("." if sometimes(0.002 * sqrt(self.parallax_distance)) else " ")
+
+        self.scroll_x += transformed_distance
+
+
+    def lines(self):
+        return self.buf
+
+from random import random
+def sometimes(fraction):
+    return fraction > random()
+
 
