@@ -111,15 +111,16 @@ class LasersInc(object):
                 self.entities.remove(entity)
                 continue
 
+            entity.update(delta_multiplier)
+
             if isinstance(entity, Bullet):
-                if (entity.x + entity.dx < 0           or
-                    entity.y + entity.dy < 0           or
-                    entity.x + entity.dx > GAME_WIDTH  or
-                    entity.y + entity.dy > GAME_HEIGHT   ):
+                if (entity.x < 0           or
+                    entity.y < 0           or
+                    entity.x > GAME_WIDTH  or
+                    entity.y > GAME_HEIGHT   ):
                     self.entities.remove(entity)
                     continue
 
-            entity.update(delta_multiplier)
 
     def draw_objects(self):
         for i in range(len(self.background_layers)):
