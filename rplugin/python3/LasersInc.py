@@ -178,9 +178,9 @@ class Spaceship(Entity):
 
     def sprite(self):
         return [
-                ">  ",
+                "\\>",
                 "==>",
-                ">  "
+                "/>"
                 ]
 
     def update(self, delta_multiplier):
