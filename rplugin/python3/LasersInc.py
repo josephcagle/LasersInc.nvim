@@ -50,7 +50,7 @@ class LasersInc(object):
 
         self.background_layers = []
         for i in builtins.range(4):
-            self.background_layers.append(Starfield(1 + i*1.2))
+            self.background_layers.append(Starfield(1+i))
 
         self.running = True
         while self.running:
@@ -104,7 +104,7 @@ class LasersInc(object):
         delta_multiplier = 1.0  # TODO: calculate based on real UPS
 
         for i in range(len(self.background_layers)):
-            self.background_layers[i].scroll(delta_multiplier)
+            self.background_layers[i].scroll(1.4 * delta_multiplier)
 
         for entity in self.entities:
             if entity.ttl < 0:
@@ -125,7 +125,7 @@ class LasersInc(object):
         for i in range(len(self.background_layers)):
             self.buf_draw(0, 0, self.background_layers[i].lines(), transparent=True)
 
-        self.buf_draw(0, 0, ['frame %s' % self.frame_num])
+        # self.buf_draw(0, 0, ['frame %s' % self.frame_num], transparent=True)
         for entity in self.entities:
             self.buf_draw(entity.x,
                           entity.y,
@@ -135,16 +135,16 @@ class LasersInc(object):
 
     @pynvim.autocmd('User', pattern="h_Pressed")
     def accelerate_spaceship_left(self):
-        self.spaceship.dx -= 1
+        self.spaceship.dx -= 1.3
     @pynvim.autocmd('User', pattern="j_Pressed")
     def accelerate_spaceship_down(self):
-        self.spaceship.dy += 1
+        self.spaceship.dy += 1.3
     @pynvim.autocmd('User', pattern="k_Pressed")
     def accelerate_spaceship_up(self):
-        self.spaceship.dy -= 1
+        self.spaceship.dy -= 1.3
     @pynvim.autocmd('User', pattern="l_Pressed")
     def accelerate_spaceship_right(self):
-        self.spaceship.dx += 1
+        self.spaceship.dx += 1.3
 
     @pynvim.autocmd('User', pattern="Space_Pressed")
     def shoot_player_bullet(self):
@@ -247,7 +247,7 @@ class Starfield(ParallaxBackground):
         for i in range(GAME_HEIGHT):
             line = ""
             for j in range(GAME_WIDTH):
-                line += ("." if sometimes(0.002 * sqrt(self.parallax_distance)) else " ")
+                line += ("." if sometimes(0.002) else " ")
             self.buf.append(line)
 
 
@@ -258,7 +258,7 @@ class Starfield(ParallaxBackground):
         # scroll n characters over
         for i in range(scroll_n_pixels):
             for j in range(len(self.buf)):
-                self.buf[j] = self.buf[j][1:] + ("." if sometimes(0.002 * sqrt(self.parallax_distance)) else " ")
+                self.buf[j] = self.buf[j][1:] + ("." if sometimes(0.002) else " ")
 
         self.scroll_x += transformed_distance
 
