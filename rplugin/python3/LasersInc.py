@@ -84,6 +84,8 @@ class LasersInc(object):
 
 
     def calc_updates(self):
+        delta_multiplier = 1.0  # TODO: calculate based on real UPS
+
         for entity in self.entities:
             if entity.ttl < 0:
                 self.entities.remove(entity)
@@ -97,7 +99,7 @@ class LasersInc(object):
                     self.entities.remove(entity)
                     continue
 
-            entity.update()
+            entity.update(delta_multiplier)
 
     def draw_objects(self):
         self.buf_draw(0, 0, ['frame %s' % self.frame_num])
@@ -134,9 +136,9 @@ class Entity:
         self.ttl = ttl
 
 
-    def update(self):
-        self.x += self.dx
-        self.y += self.dy
+    def update(self, delta_multiplier):
+        self.x += self.dx * delta_multiplier
+        self.y += self.dy * delta_multiplier
         if self.x < 0:
             self.x = 0
             self.dx = 0
@@ -165,10 +167,10 @@ class Spaceship(Entity):
                 ">  "
                 ]
 
-    def update(self):
-        self.dx *= 0.95
-        self.dy *= 0.85
-        Entity.update(self)
+    def update(self, delta_multiplier):
+        self.dx *= 1 - (0.05 * delta_multiplier)
+        self.dy *= 1 - (0.15 * delta_multiplier)
+        Entity.update(self, delta_multiplier)
 
     def shoot_bullet(self):
         bullet = Bullet(self.x+3, self.y+1,  self.dx+4, self.dy)
@@ -185,11 +187,11 @@ class Bullet(Entity):
     def sprite(self):
         return ["-"]
 
-    def update(self):
-        self.dx *= 0.98
-        self.dy *= 0.8
-        self.x += self.dx
-        self.y += self.dy
+    def update(self, delta_multiplier):
+        self.dx *= 1 - (0.02 * delta_multiplier)
+        self.dy *= 1 - (0.2 * delta_multiplier)
+        self.x += self.dx * delta_multiplier
+        self.y += self.dy * delta_multiplier
 
-        self.ttl -= 1
+        self.ttl -= 1 * delta_multiplier
 
