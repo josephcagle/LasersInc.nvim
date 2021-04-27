@@ -61,17 +61,24 @@ class LasersInc(object):
     def render(self):
         self.nvim.current.buffer[0:GAME_HEIGHT] = self.frame_buf
 
-    def buf_draw(self, x, y, lines):
+    def buf_draw(self, x, y, lines, transparent=False):
         x = int(x)
         y = int(y)
         for i in range(len(lines)):
             new_screen_line = self.frame_buf[y+i][0:x]
-            new_screen_line += lines[i]
+
+            if transparent:
+                old_screen_line = self.frame_buf[y+i]
+                for j in range(len(lines[i])):
+                    if lines[i][j] == " ":
+                        new_screen_line += old_screen_line[x+j]
+                    else:
+                        new_screen_line += lines[i][j]
+            else:
+                new_screen_line += lines[i]
+
             new_screen_line += self.frame_buf[y+i][(x+len(lines[i])):]
             self.frame_buf[y+i] = new_screen_line
-            # chars = list(lines[i])
-            # for j in range(len(chars)):
-
 
 
     @pynvim.autocmd('User', pattern='GameTick', sync=True)
@@ -104,7 +111,10 @@ class LasersInc(object):
     def draw_objects(self):
         self.buf_draw(0, 0, ['frame %s' % self.frame_num])
         for entity in self.entities:
-            self.buf_draw(entity.x, entity.y, entity.sprite())
+            self.buf_draw(entity.x,
+                          entity.y,
+                          entity.sprite(),
+                          transparent=entity.transparent)
 
 
     @pynvim.autocmd('User', pattern="h_Pressed")
@@ -126,13 +136,14 @@ class LasersInc(object):
 
 
 class Entity:
-    def __init__(self, x, y, width, height, ttl=inf):
+    def __init__(self, x, y, width, height, transparent=True, ttl=inf):
         self.x = x
         self.y = y
         self.dx = 0
         self.dy = 0
         self.width = width
         self.height = height
+        self.transparent = transparent
         self.ttl = ttl
 
 
