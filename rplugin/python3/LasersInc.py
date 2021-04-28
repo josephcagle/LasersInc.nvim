@@ -29,6 +29,10 @@ class LasersInc(object):
         self.spaceship = None
         self.background_layers = []
 
+        self.player_lives = 3
+        self.player_capacitor_charge = 8.0
+        self.game_over = False
+
 
     @pynvim.command('LasersInc', nargs='*', range='', sync=False)
     def start(self, args, range):
@@ -149,6 +153,23 @@ class LasersInc(object):
     @pynvim.autocmd('User', pattern="Space_Pressed")
     def shoot_player_bullet(self):
         self.entities.append(self.spaceship.shoot_bullet())
+        self.update_statusline()
+
+
+    def update_statusline(self):
+        if self.game_over:
+            self.nvim.command("set statusline=%#StatusLine#\\ %#StatusLineRed#\\ Game\\ Over\\ %#StatusLine#")
+        else:
+            new_statusline = "\\ %#StatusLine#\\ %#StatusLineTitle#\\ Lives:\\ %#StatusLineRed#"
+            new_statusline += "\\ ".join(["♥︎"] * self.player_lives) + ("\\ " * (3-self.player_lives)*2)
+            new_statusline += "\\ %#StatusLine#"
+            new_statusline += "%="
+            new_statusline += "%#StatusLineTitle#\\ Capacitor\\ Charge\\ %#StatusLineGreen#"
+            new_statusline += ("\\ " * int(8 - self.player_capacitor_charge)) + ("]" * int(self.player_capacitor_charge))
+            new_statusline += "\\ %#StatusLine#\\ "
+
+            # self.nvim.command("echom " + new_statusline)
+            self.nvim.command("set statusline=" + new_statusline)
 
 
 class Entity:

@@ -18,6 +18,12 @@ nnoremap <silent> o :doautocmd User o_Pressed<CR>
 nnoremap <silent> O :doautocmd User O_Pressed<CR>
 nnoremap <silent> <Space> :doautocmd User Space_Pressed<CR>
 
+" highlight groups for statusline
+highlight StatusLine ctermfg=DarkGray ctermbg=White
+highlight StatusLineTitle ctermfg=Black ctermbg=Gray
+highlight StatusLineRed ctermfg=DarkRed ctermbg=Gray
+highlight StatusLineGreen ctermfg=Green ctermbg=Gray
+
 function s:startTheGame()
     UpdateRemotePlugins
     echo " "
