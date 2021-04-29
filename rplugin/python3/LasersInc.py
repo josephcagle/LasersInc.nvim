@@ -124,6 +124,8 @@ class LasersInc(object):
                     entity.y > GAME_HEIGHT   ):
                     self.entities.remove(entity)
 
+        self.update_statusline()
+
 
     def draw_objects(self):
         for i in range(len(self.background_layers)):
@@ -153,7 +155,6 @@ class LasersInc(object):
     @pynvim.autocmd('User', pattern="Space_Pressed")
     def shoot_player_bullet(self):
         self.entities.append(self.spaceship.shoot_bullet())
-        self.update_statusline()
 
     @pynvim.autocmd('User', pattern="Shift_o_Pressed")
     def toggle_player_top_laser(self):
