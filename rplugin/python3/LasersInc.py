@@ -30,7 +30,6 @@ class LasersInc(object):
         self.background_layers = []
 
         self.player_lives = 3
-        self.player_capacitor_charge = 8.0
         self.game_over = False
 
 
@@ -173,7 +172,7 @@ class LasersInc(object):
             new_statusline += "\\ %#StatusLine#"
             new_statusline += "%="
             new_statusline += "%#StatusLineTitle#\\ Capacitor\\ Charge\\ %#StatusLineGreen#"
-            new_statusline += ("\\ " * int(8 - self.player_capacitor_charge)) + ("]" * int(self.player_capacitor_charge))
+            new_statusline += ("\\ " * int(8 - self.spaceship.capacitor_charge)) + ("]" * int(self.spaceship.capacitor_charge))
             new_statusline += "\\ %#StatusLine#\\ "
 
             # self.nvim.command("echom " + new_statusline)
@@ -217,6 +216,7 @@ class Spaceship(Entity):
         self.bullets = []
         self.top_laser = False
         self.bottom_laser = False
+        self.capacitor_charge = 8.0
 
     def sprite(self):
         return_val = [
