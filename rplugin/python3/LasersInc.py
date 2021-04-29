@@ -172,7 +172,8 @@ class LasersInc(object):
             new_statusline += "\\ %#StatusLine#"
             new_statusline += "%="
             new_statusline += "%#StatusLineTitle#\\ Capacitor\\ Charge\\ %#StatusLineGreen#"
-            new_statusline += ("\\ " * int(8 - self.spaceship.capacitor_charge)) + ("]" * int(self.spaceship.capacitor_charge))
+            new_statusline += "\\ " * (8 - max(int(self.spaceship.capacitor_charge), 0))
+            new_statusline += "]" * int(self.spaceship.capacitor_charge)
             new_statusline += "\\ %#StatusLine#\\ "
 
             # self.nvim.command("echom " + new_statusline)
