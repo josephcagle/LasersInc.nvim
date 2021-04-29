@@ -155,6 +155,13 @@ class LasersInc(object):
         self.entities.append(self.spaceship.shoot_bullet())
         self.update_statusline()
 
+    @pynvim.autocmd('User', pattern="Shift_o_Pressed")
+    def toggle_player_top_laser(self):
+        self.spaceship.toggle_top_laser()
+    @pynvim.autocmd('User', pattern="o_Pressed")
+    def toggle_player_bottom_laser(self):
+        self.spaceship.toggle_bottom_laser()
+
 
     def update_statusline(self):
         if self.game_over:
@@ -207,13 +214,22 @@ class Spaceship(Entity):
     def __init__(self):
         Entity.__init__(self, 0, 0, 3, 3)
         self.bullets = []
+        self.top_laser = False
+        self.bottom_laser = False
 
     def sprite(self):
-        return [
+        return_val = [
                 "\\>",
                 "==>",
                 "/>"
                 ]
+
+        if self.top_laser:
+            return_val[0] += "X" + ("=" * (GAME_WIDTH - (int(self.x)+3)))
+        if self.bottom_laser:
+            return_val[2] += "X" + ("=" * (GAME_WIDTH - (int(self.x)+3)))
+
+        return return_val
 
     def update(self, delta_multiplier):
         self.dx *= 1 - (0.05 * delta_multiplier)
@@ -224,6 +240,11 @@ class Spaceship(Entity):
         bullet = Bullet(self.x+3, self.y+1,  self.dx+4, self.dy)
         self.bullets.append(bullet)
         return bullet
+
+    def toggle_top_laser(self):
+        self.top_laser = not self.top_laser
+    def toggle_bottom_laser(self):
+        self.bottom_laser = not self.bottom_laser
 
 
 class Bullet(Entity):
