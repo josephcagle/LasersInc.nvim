@@ -237,6 +237,18 @@ class Spaceship(Entity):
         self.dy *= 1 - (0.15 * delta_multiplier)
         Entity.update(self, delta_multiplier)
 
+        if self.top_laser:
+            self.capacitor_charge -= 0.2
+        if self.bottom_laser:
+            self.capacitor_charge -= 0.2
+
+        if self.capacitor_charge <= 0:
+            self.top_laser = False
+            self.bottom_laser = False
+
+        if self.capacitor_charge <= 8.0:
+            self.capacitor_charge += 0.02
+
     def shoot_bullet(self):
         bullet = Bullet(self.x+3, self.y+1,  self.dx+4, self.dy)
         self.bullets.append(bullet)
