@@ -151,6 +151,28 @@ class LasersInc(object):
                         self.entities.remove(other_entity)
                         break
 
+            elif isinstance(entity, Spaceship):
+                if entity.top_laser or entity.bottom_laser:
+
+                    for other_entity in self.entities:
+                        if other_entity is entity:
+                            continue
+
+                        if ( other_entity.y
+                                <=
+                             entity.y + (0 if entity.top_laser else 2)
+                                <=
+                             other_entity.y + other_entity.height-1
+                           ) \
+                        and \
+                           ( entity.x + 2
+                                <=
+                             other_entity.x + other_entity.width-1
+                           ):
+
+                            self.entities.remove(other_entity)
+
+
         if sometimes(1 / (TARGET_FPS * 20)):
             self.entities.append(AlienMinion(GAME_WIDTH - 2, int(random()*GAME_HEIGHT)))
 
