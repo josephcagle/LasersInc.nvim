@@ -123,6 +123,9 @@ class LasersInc(object):
                     entity.y > GAME_HEIGHT   ):
                     self.entities.remove(entity)
 
+        if sometimes(1 / (TARGET_FPS * 20)):
+            self.entities.append(AlienMinion(GAME_WIDTH - 2, int(random()*GAME_HEIGHT)))
+
         self.update_statusline()
 
 
@@ -180,6 +183,7 @@ class LasersInc(object):
             self.nvim.command("set statusline=" + new_statusline)
 
 
+
 class Entity:
     def __init__(self, x, y, width, height, transparent=True, ttl=inf):
         self.x = x
@@ -210,6 +214,8 @@ class Entity:
 
     def sprite(self):
         raise NotImplementedError()
+
+
 
 class Spaceship(Entity):
     def __init__(self):
@@ -261,6 +267,7 @@ class Spaceship(Entity):
         self.bottom_laser = not self.bottom_laser
 
 
+
 class Bullet(Entity):
     def __init__(self, x, y, dx, dy):
         Entity.__init__(self, x, y, 1, 1, ttl = TARGET_FPS * 4)
@@ -277,6 +284,30 @@ class Bullet(Entity):
         self.y += self.dy * delta_multiplier
 
         self.ttl -= 1 * delta_multiplier
+
+
+class Enemy(Entity):
+    def __init__(self, x, y, width, height):
+        Entity.__init__(self, x, y, width, height)
+
+class AlienMinion(Enemy):
+    def __init__(self, x, y):
+        Enemy.__init__(self, x, y, 2, 2)
+        self.update_count = 0.0
+
+    def update(self, delta_multiplier):
+        self.update_count += delta_multiplier
+        if int(self.update_count) % int(TARGET_FPS * 1.5) == 0:
+            self.y += 1
+        elif (int(self.update_count) - int(TARGET_FPS * 1.0)) \
+            % int(TARGET_FPS * 1.5) == 0:
+            self.y -= 1
+
+    def sprite(self):
+        return [
+                "oo",
+                "''"
+                ]
 
 
 
