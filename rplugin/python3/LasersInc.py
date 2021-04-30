@@ -142,6 +142,14 @@ class LasersInc(object):
                     entity.x > GAME_WIDTH  or
                     entity.y > GAME_HEIGHT   ):
                     self.entities.remove(entity)
+                    continue
+
+                for other_entity in self.entities:
+                    if entity is other_entity: continue
+                    if entity.is_intersecting_with(other_entity):
+                        self.entities.remove(entity)
+                        self.entities.remove(other_entity)
+                        break
 
         if sometimes(1 / (TARGET_FPS * 20)):
             self.entities.append(AlienMinion(GAME_WIDTH - 2, int(random()*GAME_HEIGHT)))
