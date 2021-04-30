@@ -236,6 +236,16 @@ class Entity:
         raise NotImplementedError()
 
 
+    def is_intersecting_with(self, other):
+        # check whether one is to the left of another
+        if (self.x + self.width < other.x) or (other.x + other.width < self.x):
+            return False
+        # check whether one is above another
+        if (self.y + self.height < other.y) or (other.y + other.height < self.y):
+            return False
+
+        return True
+
 
 class Spaceship(Entity):
     def __init__(self):
