@@ -137,10 +137,10 @@ class LasersInc(object):
             entity.update(delta_multiplier)
 
             if isinstance(entity, Bullet):
-                if (entity.x < 0           or
-                    entity.y < 0           or
-                    entity.x > GAME_WIDTH  or
-                    entity.y > GAME_HEIGHT   ):
+                if ( entity.x < 0 and entity.dx < 0           or
+                     entity.y < 0 and entity.dy < 0           or
+                     entity.x > GAME_WIDTH  and entity.dx > 0 or
+                     entity.y > GAME_HEIGHT and entity.dx > 0 ):
                     self.entities.remove(entity)
                     continue
 
