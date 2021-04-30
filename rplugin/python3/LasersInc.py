@@ -73,24 +73,44 @@ class LasersInc(object):
         x = int(x)
         y = int(y)
 
-        if y + len(lines) > GAME_HEIGHT or \
-           x + len(max(lines, key=len)) > GAME_WIDTH:
-            raise Exception(f"cannot draw offscreen (at {x}, {y})")
+        # guarantee at least part of the sprite is on-screen
+        if y > GAME_HEIGHT or x > GAME_WIDTH:
+            return
+        if y + len(lines) < 0 or x + len(max(lines, key=len)) < 0:
+            return
 
         for i in range(len(lines)):
-            new_screen_line = self.frame_buf[y+i][0:x]
+            if y+i < 0:
+                continue
+            if y+i >= GAME_HEIGHT:
+                break
 
-            if transparent:
-                old_screen_line = self.frame_buf[y+i]
-                for j in range(len(lines[i])):
-                    if lines[i][j] == " ":
-                        new_screen_line += old_screen_line[x+j]
-                    else:
-                        new_screen_line += lines[i][j]
-            else:
-                new_screen_line += lines[i]
+            # as the system is currently implemented, some lines are longer
+            # than others, so check and make sure this particular line
+            # isn't completely off-screen
+            if x + len(lines[i]) < 0:
+                continue
 
-            new_screen_line += self.frame_buf[y+i][(x+len(lines[i])):]
+            old_screen_line = self.frame_buf[y+i]
+
+            new_screen_line = ""
+            if x > 0:
+                new_screen_line += old_screen_line[0:x]
+
+            for j in range(len(lines[i])):
+                if x+j < 0:
+                    continue
+                if x+j >= GAME_WIDTH:
+                    break
+
+                if transparent and lines[i][j] == " ":
+                    new_screen_line += old_screen_line[x+j]
+                else:
+                    new_screen_line += lines[i][j]
+
+            if x + len(lines[i]) < GAME_WIDTH:
+                new_screen_line += old_screen_line[(x+len(lines[i])):]
+
             self.frame_buf[y+i] = new_screen_line
 
 
@@ -199,18 +219,18 @@ class Entity:
     def update(self, delta_multiplier):
         self.x += self.dx * delta_multiplier
         self.y += self.dy * delta_multiplier
-        if self.x < 0:
-            self.x = 0
-            self.dx = 0
-        elif self.x + self.width > GAME_WIDTH:
-            self.x = GAME_WIDTH - self.width
-            self.dx = 0
-        if self.y < 0:
-            self.y = 0
-            self.dy = 0
-        elif self.y + self.height > GAME_HEIGHT:
-            self.y = GAME_HEIGHT - self.height
-            self.dy = 0
+        # if self.x < 0:
+        #     self.x = 0
+        #     self.dx = 0
+        # elif self.x + self.width > GAME_WIDTH:
+        #     self.x = GAME_WIDTH - self.width
+        #     self.dx = 0
+        # if self.y < 0:
+        #     self.y = 0
+        #     self.dy = 0
+        # elif self.y + self.height > GAME_HEIGHT:
+        #     self.y = GAME_HEIGHT - self.height
+        #     self.dy = 0
 
     def sprite(self):
         raise NotImplementedError()
