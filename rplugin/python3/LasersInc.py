@@ -2,6 +2,7 @@
 import pynvim
 from time import sleep
 from numpy import inf
+import math
 
 import builtins
 
@@ -148,10 +149,11 @@ class LasersInc(object):
                     if entity is other_entity: continue
                     if entity.is_intersecting_with(other_entity):
                         self.entities.remove(entity)
-                        other_entity.health -= entity.damage_value
-                        if other_entity.health <= 0:
-                            self.entities.remove(other_entity)
-                        break
+                        if isinstance(other_entity, HealthyEntity):
+                            other_entity.health -= entity.get_damage_value()
+                            if other_entity.health <= 0:
+                                self.entities.remove(other_entity)
+                            break
 
             elif isinstance(entity, Spaceship):
                 if entity.top_laser or entity.bottom_laser:
@@ -325,7 +327,7 @@ class Spaceship(HealthyEntity):
             self.capacitor_charge += 0.02
 
     def shoot_bullet(self):
-        bullet = Bullet(self.x+3, self.y+1,  self.dx+4, self.dy, 5)
+        bullet = Bullet(self.x+3, self.y+1,  self.dx+4, self.dy, 10)
         self.bullets.append(bullet)
         return bullet
 
@@ -341,7 +343,7 @@ class Bullet(Entity):
         Entity.__init__(self, x, y, 1, 1, ttl = TARGET_FPS * 4)
         self.dx = dx
         self.dy = dy
-        self.damage_value = damage_value
+        self.base_damage_value = damage_value / math.hypot(dx, dy)
 
     def sprite(self):
         return ["-"]
@@ -354,6 +356,8 @@ class Bullet(Entity):
 
         self.ttl -= 1 * delta_multiplier
 
+    def get_damage_value(self):
+        return self.base_damage_value * math.hypot(self.dx, self.dy)
 
 class Enemy(HealthyEntity):
     def __init__(self, x, y, width, height, health):
