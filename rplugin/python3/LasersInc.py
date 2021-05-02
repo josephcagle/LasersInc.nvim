@@ -288,6 +288,7 @@ class Entity:
 class HealthyEntity(Entity):
     def __init__(self, x, y, width, height, health):
         Entity.__init__(self, x, y, width, height)
+        self.max_health = health
         self.health = health
 
 
