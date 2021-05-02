@@ -400,7 +400,6 @@ class ParallaxBackground(Background):
     def moveCameraRight(self):
         raise NotImplementedError()
 
-from math import sqrt
 class Starfield(ParallaxBackground):
     def __init__(self, parallax_distance):
         self.parallax_distance = parallax_distance
