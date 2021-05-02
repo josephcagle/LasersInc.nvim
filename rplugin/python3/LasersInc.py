@@ -148,7 +148,9 @@ class LasersInc(object):
                     if entity is other_entity: continue
                     if entity.is_intersecting_with(other_entity):
                         self.entities.remove(entity)
-                        self.entities.remove(other_entity)
+                        other_entity.health -= entity.damage_value
+                        if other_entity.health <= 0:
+                            self.entities.remove(other_entity)
                         break
 
             elif isinstance(entity, Spaceship):
@@ -277,9 +279,15 @@ class Entity:
         return True
 
 
-class Spaceship(Entity):
+class HealthyEntity(Entity):
+    def __init__(self, x, y, width, height, health):
+        Entity.__init__(self, x, y, width, height)
+        self.health = health
+
+
+class Spaceship(HealthyEntity):
     def __init__(self):
-        Entity.__init__(self, 0, 0, 3, 3)
+        Entity.__init__(self, 0, 0, 3, 3, 100)
         self.bullets = []
         self.top_laser = False
         self.bottom_laser = False
@@ -317,7 +325,7 @@ class Spaceship(Entity):
             self.capacitor_charge += 0.02
 
     def shoot_bullet(self):
-        bullet = Bullet(self.x+3, self.y+1,  self.dx+4, self.dy)
+        bullet = Bullet(self.x+3, self.y+1,  self.dx+4, self.dy, 5)
         self.bullets.append(bullet)
         return bullet
 
@@ -329,10 +337,11 @@ class Spaceship(Entity):
 
 
 class Bullet(Entity):
-    def __init__(self, x, y, dx, dy):
+    def __init__(self, x, y, dx, dy, damage_value):
         Entity.__init__(self, x, y, 1, 1, ttl = TARGET_FPS * 4)
         self.dx = dx
         self.dy = dy
+        self.damage_value = damage_value
 
     def sprite(self):
         return ["-"]
@@ -346,13 +355,13 @@ class Bullet(Entity):
         self.ttl -= 1 * delta_multiplier
 
 
-class Enemy(Entity):
-    def __init__(self, x, y, width, height):
-        Entity.__init__(self, x, y, width, height)
+class Enemy(HealthyEntity):
+    def __init__(self, x, y, width, height, health):
+        HealthyEntity(x, y, width, height, health)
 
-class AlienMinion(Enemy):
+class AlienMinion(HealthyEntity):
     def __init__(self, x, y):
-        Enemy.__init__(self, x, y, 2, 2)
+        HealthyEntity.__init__(self, x, y, 2, 2, 10)
         self.update_count = 0.0
 
     def update(self, delta_multiplier):
