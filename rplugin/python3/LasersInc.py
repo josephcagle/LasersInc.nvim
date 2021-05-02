@@ -197,16 +197,20 @@ class LasersInc(object):
 
     @pynvim.autocmd('User', pattern="h_Pressed")
     def accelerate_spaceship_left(self):
-        self.spaceship.dx -= 0.8
+        self.spaceship.dx -= \
+                math.hypot(self.spaceship.dx, self.spaceship.dy) * 0.1 + 0.5
     @pynvim.autocmd('User', pattern="j_Pressed")
     def accelerate_spaceship_down(self):
-        self.spaceship.dy += 0.8
+        self.spaceship.dy += \
+                math.hypot(self.spaceship.dx, self.spaceship.dy) * 0.1 + 0.5
     @pynvim.autocmd('User', pattern="k_Pressed")
     def accelerate_spaceship_up(self):
-        self.spaceship.dy -= 0.8
+        self.spaceship.dy -= \
+                math.hypot(self.spaceship.dx, self.spaceship.dy) * 0.1 + 0.5
     @pynvim.autocmd('User', pattern="l_Pressed")
     def accelerate_spaceship_right(self):
-        self.spaceship.dx += 0.8
+        self.spaceship.dx += \
+                math.hypot(self.spaceship.dx, self.spaceship.dy) * 0.1 + 0.5
 
     @pynvim.autocmd('User', pattern="Space_Pressed")
     def shoot_player_bullet(self):
