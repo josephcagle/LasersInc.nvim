@@ -26,7 +26,7 @@ class LasersInc(object):
 
         self.running = False
 
-        self.entities = []
+        self.entities = EntityList()
         self.spaceship = None
         self.background_layers = []
 
@@ -54,9 +54,9 @@ class LasersInc(object):
         del screen[0]  # get rid of first line
 
         # reset state
-        self.entities = []
+        self.entities = EntityList()
         self.spaceship = Spaceship()
-        self.entities.append(self.spaceship)
+        self.entities.addEntity(self.spaceship)
 
         self.background_layers = []
         for i in builtins.range(4):
@@ -138,7 +138,7 @@ class LasersInc(object):
 
         for entity in self.entities:
             if entity.ttl < 0:
-                self.entities.remove(entity)
+                self.entities.removeEntity(entity)
                 continue
 
             entity.update(delta_multiplier)
@@ -148,17 +148,17 @@ class LasersInc(object):
                      entity.y < 0 and entity.dy < 0           or
                      entity.x > GAME_WIDTH  and entity.dx > 0 or
                      entity.y > GAME_HEIGHT and entity.dx > 0 ):
-                    self.entities.remove(entity)
+                    self.entities.removeEntity(entity)
                     continue
 
                 for other_entity in self.entities:
                     if entity is other_entity: continue
                     if entity.is_intersecting_with(other_entity):
-                        self.entities.remove(entity)
+                        self.entities.removeEntity(entity)
                         if isinstance(other_entity, HealthyEntity):
                             other_entity.health -= entity.get_damage_value()
                             if other_entity.health <= 0:
-                                self.entities.remove(other_entity)
+                                self.entities.removeEntity(other_entity)
                             break
 
             elif isinstance(entity, Spaceship):
@@ -180,11 +180,11 @@ class LasersInc(object):
                              other_entity.x + other_entity.width-1
                            ):
 
-                            self.entities.remove(other_entity)
+                            self.entities.removeEntity(other_entity)
 
 
         if sometimes(1 / (TARGET_FPS * 20)):
-            self.entities.append(AlienMinion(GAME_WIDTH - 2, int(random()*GAME_HEIGHT)))
+            self.entities.addEntity(AlienMinion(GAME_WIDTH - 2, int(random()*GAME_HEIGHT)))
 
         self.update_statusline()
 
@@ -220,7 +220,7 @@ class LasersInc(object):
 
     @pynvim.autocmd('User', pattern="Space_Pressed")
     def shoot_player_bullet(self):
-        self.entities.append(self.spaceship.shoot_bullet())
+        self.entities.addEntity(self.spaceship.shoot_bullet())
 
     @pynvim.autocmd('User', pattern="Shift_o_Pressed")
     def toggle_player_top_laser(self):
@@ -246,6 +246,21 @@ class LasersInc(object):
             # self.nvim.command("echom " + new_statusline)
             self.nvim.command("set statusline=" + new_statusline)
 
+
+
+class EntityList:
+    def __init__(self):
+        self.list = []
+
+    def addEntity(self, entity):
+        self.list.append(entity)
+
+    def removeEntity(self, entity):
+        # TODO: validation
+        self.list.remove(entity)
+
+    def __iter__(self):
+        return self.list.__iter__()
 
 
 class Entity:
