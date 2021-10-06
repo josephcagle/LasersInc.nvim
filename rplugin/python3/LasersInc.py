@@ -291,6 +291,9 @@ class Entity:
         #     self.y = GAME_HEIGHT - self.height
         #     self.dy = 0
 
+    def on_event(self, event_type, *data):
+        pass
+
     def sprite(self):
         raise NotImplementedError()
 
