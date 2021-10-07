@@ -137,7 +137,7 @@ class LasersInc(object):
             self.background_layers[i].scroll(1.4 * delta_multiplier)
 
         for entity in self.entities:
-            if entity.ttl < 0:
+            if entity.delete_me:
                 self.entities.removeEntity(entity)
                 continue
 
@@ -264,7 +264,7 @@ class EntityList:
 
 
 class Entity:
-    def __init__(self, x, y, width, height, transparent=True, ttl=inf):
+    def __init__(self, x, y, width, height, transparent=True):
         self.x = x
         self.y = y
         self.dx = 0
@@ -272,7 +272,7 @@ class Entity:
         self.width = width
         self.height = height
         self.transparent = transparent
-        self.ttl = ttl
+        self.delete_me = False
 
 
     def update(self, delta_multiplier):
@@ -369,7 +369,8 @@ class Spaceship(HealthyEntity):
 
 class Bullet(Entity):
     def __init__(self, x, y, dx, dy, damage_value):
-        Entity.__init__(self, x, y, 1, 1, ttl = TARGET_FPS * 4)
+        Entity.__init__(self, x, y, 1, 1)
+        self.ttl = TARGET_FPS * 4
         self.dx = dx
         self.dy = dy
         self.base_damage_value = damage_value / math.hypot(dx, dy)
@@ -384,6 +385,8 @@ class Bullet(Entity):
         self.y += self.dy * delta_multiplier
 
         self.ttl -= 1 * delta_multiplier
+        if self.ttl <= 0:
+            self.delete_me = True
 
     def get_damage_value(self):
         return self.base_damage_value * math.hypot(self.dx, self.dy)
