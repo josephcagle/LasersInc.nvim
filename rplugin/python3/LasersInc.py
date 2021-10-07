@@ -34,6 +34,12 @@ class LasersInc(object):
         self.game_over = False
 
 
+    def printMessage(self, message):
+        self.nvim.command('echom "%s"\n' % message.replace('"', '\\"'))
+    ## test
+    # self.printMessage('"ain\'t it workin\' yet?"')
+
+
     @pynvim.command('LasersInc', nargs='*', range='', sync=False)
     def start(self, args, range):
         if self.running:
