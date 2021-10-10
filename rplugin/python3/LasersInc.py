@@ -143,6 +143,17 @@ class LasersInc(object):
 
             entity.update(delta_multiplier)
 
+            if entity.delete_me:
+                self.entities.removeEntity(entity)
+                continue
+
+            for other_entity in self.entities:
+                if entity is other_entity: continue
+                if entity.is_intersecting_with(other_entity):
+                    # call the event listener
+                    # (TODO: maybe rename the method later)
+                    entity.on_event("intersection", other_entity)
+
             if isinstance(entity, Bullet):
                 if ( entity.x < 0 and entity.dx < 0           or
                      entity.y < 0 and entity.dy < 0           or
@@ -150,16 +161,6 @@ class LasersInc(object):
                      entity.y > GAME_HEIGHT and entity.dx > 0 ):
                     self.entities.removeEntity(entity)
                     continue
-
-                for other_entity in self.entities:
-                    if entity is other_entity: continue
-                    if entity.is_intersecting_with(other_entity):
-                        self.entities.removeEntity(entity)
-                        if isinstance(other_entity, HealthyEntity):
-                            other_entity.health -= entity.get_damage_value()
-                            if other_entity.health <= 0:
-                                self.entities.removeEntity(other_entity)
-                            break
 
             elif isinstance(entity, Spaceship):
                 if entity.top_laser or entity.bottom_laser:
@@ -391,6 +392,11 @@ class Bullet(Entity):
     def get_damage_value(self):
         return self.base_damage_value * math.hypot(self.dx, self.dy)
 
+    def on_event(self, event_type, *data):
+        if event_type == "intersection" and not isinstance(data[0], Bullet):
+            self.delete_me = True
+
+
 class Enemy(HealthyEntity):
     def __init__(self, x, y, width, height, health):
         HealthyEntity(x, y, width, height, health)
@@ -413,6 +419,13 @@ class AlienMinion(HealthyEntity):
                 "oo",
                 "''"
                 ]
+
+    def on_event(self, event_type, *data):
+        if event_type == "intersection":
+            other_entity = data[0]
+            if isinstance(other_entity, Bullet):
+                self.health -= other_entity.get_damage_value()
+            if self.health <= 0: self.delete_me = True
 
 
 
