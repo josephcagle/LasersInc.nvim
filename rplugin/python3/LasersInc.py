@@ -195,7 +195,7 @@ class LasersInc(object):
             self.buf_draw(0, 0, self.background_layers[i].lines(), transparent=True)
 
         # self.buf_draw(0, 0, ['frame %s' % self.frame_num], transparent=True)
-        for entity in self.entities:
+        for entity in sorted(self.entities, key = lambda entity: entity.z_order):
             self.buf_draw(entity.x,
                           entity.y,
                           entity.sprite(),
@@ -273,6 +273,7 @@ class Entity:
         self.width = width
         self.height = height
         self.transparent = transparent
+        self.z_order = 0
         self.delete_me = False
 
 
@@ -320,6 +321,8 @@ class HealthyEntity(Entity):
 class Spaceship(HealthyEntity):
     def __init__(self):
         Entity.__init__(self, 0, 0, 3, 3, 100)
+        # spaceship should always be on top
+        self.z_order = inf
         self.bullets = []
         self.top_laser = False
         self.bottom_laser = False
