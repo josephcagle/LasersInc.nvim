@@ -34,7 +34,7 @@ class LasersInc(object):
         self.game_over = False
 
 
-    def printMessage(self, message):
+    def print_message(self, message):
         self.nvim.command('echom "%s"\n' % message.replace('"', '\\"'))
     ## test
     # self.printMessage('"ain\'t it workin\' yet?"')
