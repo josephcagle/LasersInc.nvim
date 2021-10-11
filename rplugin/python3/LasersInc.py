@@ -313,14 +313,14 @@ class Entity:
 
 class HealthyEntity(Entity):
     def __init__(self, x, y, width, height, health):
-        Entity.__init__(self, x, y, width, height)
+        super().__init__(x, y, width, height)
         self.max_health = health
         self.health = health
 
 
 class Spaceship(HealthyEntity):
     def __init__(self):
-        Entity.__init__(self, 0, 0, 3, 3, 100)
+        super().__init__(0, 0, 3, 3, 100)
         # spaceship should always be on top
         self.z_order = inf
         self.bullets = []
@@ -373,7 +373,7 @@ class Spaceship(HealthyEntity):
 
 class Bullet(Entity):
     def __init__(self, x, y, dx, dy, damage_value):
-        Entity.__init__(self, x, y, 1, 1)
+        super().__init__(x, y, 1, 1)
         self.ttl = TARGET_FPS * 4
         self.dx = dx
         self.dy = dy
@@ -402,11 +402,11 @@ class Bullet(Entity):
 
 class Enemy(HealthyEntity):
     def __init__(self, x, y, width, height, health):
-        HealthyEntity(x, y, width, height, health)
+        super().__init__(x, y, width, height, health)
 
 class AlienMinion(HealthyEntity):
     def __init__(self, x, y):
-        HealthyEntity.__init__(self, x, y, 2, 2, 10)
+        super().__init__(x, y, 2, 2, 10)
         self.update_count = 0.0
 
     def update(self, delta_multiplier):
