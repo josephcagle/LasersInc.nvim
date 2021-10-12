@@ -267,6 +267,7 @@ class Entity:
         self.transparent = transparent
         self.z_order = 0
         self.delete_me = False
+        self.children = []
 
 
     def update(self, delta_multiplier):
