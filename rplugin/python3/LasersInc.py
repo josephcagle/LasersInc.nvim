@@ -154,15 +154,7 @@ class LasersInc(object):
                     # (TODO: maybe rename the method later)
                     entity.on_event("intersection", other_entity)
 
-            if isinstance(entity, Bullet):
-                if ( entity.x < 0 and entity.dx < 0           or
-                     entity.y < 0 and entity.dy < 0           or
-                     entity.x > GAME_WIDTH  and entity.dx > 0 or
-                     entity.y > GAME_HEIGHT and entity.dx > 0 ):
-                    self.entities.removeEntity(entity)
-                    continue
-
-            elif isinstance(entity, Spaceship):
+            if isinstance(entity, Spaceship):
                 if entity.top_laser or entity.bottom_laser:
 
                     for other_entity in self.entities:
@@ -387,6 +379,13 @@ class Bullet(Entity):
         self.dy *= 1 - (0.2 * delta_multiplier)
         self.x += self.dx * delta_multiplier
         self.y += self.dy * delta_multiplier
+
+        if ( self.x < 0 and self.dx < 0           or
+             self.y < 0 and self.dy < 0           or
+             self.x > GAME_WIDTH  and self.dx > 0 or
+             self.y > GAME_HEIGHT and self.dx > 0 ):
+            self.delete_me = True
+            return
 
         self.ttl -= 1 * delta_multiplier
         if self.ttl <= 0:
