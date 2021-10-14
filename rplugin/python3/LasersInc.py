@@ -130,7 +130,7 @@ class LasersInc(object):
         self.calc_updates()
 
 
-    # helper function for calc_updates
+    # recursive helper function for calc_updates
     def update_entity(self, entity, delta_multiplier):
         if entity.delete_me:
             self.entities.removeEntity(entity)
@@ -169,6 +169,10 @@ class LasersInc(object):
                        ):
 
                         self.entities.removeEntity(other_entity)
+
+        if len(entity.children) > 0:
+            for child in entity.children:
+                self.update_entity(child, delta_multiplier)
 
 
     def calc_updates(self):
