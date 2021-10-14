@@ -130,6 +130,47 @@ class LasersInc(object):
         self.calc_updates()
 
 
+    # helper function for calc_updates
+    def update_entity(self, entity, delta_multiplier):
+        if entity.delete_me:
+            self.entities.removeEntity(entity)
+            return
+
+        entity.update(delta_multiplier)
+
+        if entity.delete_me:
+            self.entities.removeEntity(entity)
+            return
+
+        for other_entity in self.entities:
+            if entity is other_entity: continue
+            if entity.is_intersecting_with(other_entity):
+                # call the event listener
+                # (TODO: maybe rename the method later)
+                entity.on_event("intersection", other_entity)
+
+        if isinstance(entity, Spaceship):
+            if entity.top_laser or entity.bottom_laser:
+
+                for other_entity in self.entities:
+                    if other_entity is entity:
+                        continue
+
+                    if ( other_entity.y
+                            <=
+                         entity.y + (0 if entity.top_laser else 2)
+                            <=
+                         other_entity.y + other_entity.height-1
+                       ) \
+                    and \
+                       ( entity.x + 2
+                            <=
+                         other_entity.x + other_entity.width-1
+                       ):
+
+                        self.entities.removeEntity(other_entity)
+
+
     def calc_updates(self):
         delta_multiplier = 1.0  # TODO: calculate based on real UPS
 
@@ -137,44 +178,7 @@ class LasersInc(object):
             self.background_layers[i].scroll(1.4 * delta_multiplier)
 
         for entity in self.entities:
-            if entity.delete_me:
-                self.entities.removeEntity(entity)
-                continue
-
-            entity.update(delta_multiplier)
-
-            if entity.delete_me:
-                self.entities.removeEntity(entity)
-                continue
-
-            for other_entity in self.entities:
-                if entity is other_entity: continue
-                if entity.is_intersecting_with(other_entity):
-                    # call the event listener
-                    # (TODO: maybe rename the method later)
-                    entity.on_event("intersection", other_entity)
-
-            if isinstance(entity, Spaceship):
-                if entity.top_laser or entity.bottom_laser:
-
-                    for other_entity in self.entities:
-                        if other_entity is entity:
-                            continue
-
-                        if ( other_entity.y
-                                <=
-                             entity.y + (0 if entity.top_laser else 2)
-                                <=
-                             other_entity.y + other_entity.height-1
-                           ) \
-                        and \
-                           ( entity.x + 2
-                                <=
-                             other_entity.x + other_entity.width-1
-                           ):
-
-                            self.entities.removeEntity(other_entity)
-
+            self.update_entity(entity, delta_multiplier)
 
         if sometimes(1 / (TARGET_FPS * 20)):
             self.entities.addEntity(AlienMinion(GAME_WIDTH - 2, int(random()*GAME_HEIGHT)))
