@@ -56,7 +56,7 @@ class LasersInc(object):
         # reset state
         self.entities = EntityList()
         self.spaceship = Spaceship()
-        self.entities.addEntity(self.spaceship)
+        self.entities.add_entity(self.spaceship)
 
         self.background_layers = []
         for i in builtins.range(4):
@@ -136,7 +136,7 @@ class LasersInc(object):
             if entity.parent:
                 entity.parent.children.remove(entity)
             elif entity in self.entities:
-                self.entities.removeEntity(entity)
+                self.entities.remove_entity(entity)
             else: raise RuntimeError("can't find parent for entity")
             return
 
@@ -146,7 +146,7 @@ class LasersInc(object):
             if entity.parent:
                 entity.parent.children.remove(entity)
             elif entity in self.entities:
-                self.entities.removeEntity(entity)
+                self.entities.remove_entity(entity)
             else: raise RuntimeError("can't find parent for entity")
             return
 
@@ -193,7 +193,7 @@ class LasersInc(object):
             self.update_entity(entity, delta_multiplier)
 
         if sometimes(1 / (TARGET_FPS * 20)):
-            self.entities.addEntity(AlienMinion(GAME_WIDTH - 2, int(random()*GAME_HEIGHT)))
+            self.entities.add_entity(AlienMinion(GAME_WIDTH - 2, int(random()*GAME_HEIGHT)))
 
         self.update_statusline()
 
@@ -266,10 +266,10 @@ class EntityList:
     def __init__(self):
         self.list = []
 
-    def addEntity(self, entity):
+    def add_entity(self, entity):
         self.list.append(entity)
 
-    def removeEntity(self, entity):
+    def remove_entity(self, entity):
         # TODO: validation
         self.list.remove(entity)
 
