@@ -150,7 +150,7 @@ class LasersInc(object):
             else: raise RuntimeError("can't find parent for entity")
             return
 
-        for other_entity in self.entities:
+        for other_entity in self.entities.get_all_in_tree():
             if entity is other_entity: continue
             if entity.is_intersecting_with(other_entity):
                 # call the event listener
