@@ -160,7 +160,7 @@ class LasersInc(object):
         if isinstance(entity, Spaceship):
             if entity.top_laser or entity.bottom_laser:
 
-                for other_entity in self.entities:
+                for other_entity in self.entities.get_all_in_tree():
                     if other_entity is entity:
                         continue
 
@@ -176,7 +176,7 @@ class LasersInc(object):
                          other_entity.x + other_entity.width-1
                        ):
 
-                        self.entities.removeEntity(other_entity)
+                        other_entity.delete_me = True
 
         if len(entity.children) > 0:
             for child in entity.children:
