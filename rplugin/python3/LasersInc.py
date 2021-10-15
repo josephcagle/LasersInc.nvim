@@ -276,6 +276,7 @@ class Entity:
         self.z_order = 0
         self.delete_me = False
         self.children = []
+        self.parent = None
 
 
     def update(self, delta_multiplier):
