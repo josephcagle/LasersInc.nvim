@@ -133,13 +133,21 @@ class LasersInc(object):
     # recursive helper function for calc_updates
     def update_entity(self, entity, delta_multiplier):
         if entity.delete_me:
-            self.entities.removeEntity(entity)
+            if entity.parent:
+                entity.parent.children.remove(entity)
+            elif entity in self.entities:
+                self.entities.removeEntity(entity)
+            else: raise RuntimeError("can't find parent for entity")
             return
 
         entity.update(delta_multiplier)
 
         if entity.delete_me:
-            self.entities.removeEntity(entity)
+            if entity.parent:
+                entity.parent.children.remove(entity)
+            elif entity in self.entities:
+                self.entities.removeEntity(entity)
+            else: raise RuntimeError("can't find parent for entity")
             return
 
         for other_entity in self.entities:
