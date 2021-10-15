@@ -234,7 +234,7 @@ class LasersInc(object):
 
     @pynvim.autocmd('User', pattern="Space_Pressed")
     def shoot_player_bullet(self):
-        self.entities.addEntity(self.spaceship.shoot_bullet())
+        self.spaceship.shoot_bullet()
 
     @pynvim.autocmd('User', pattern="Shift_o_Pressed")
     def toggle_player_top_laser(self):
@@ -395,8 +395,9 @@ class Spaceship(HealthyEntity):
 
     def shoot_bullet(self):
         bullet = Bullet(self.x+3, self.y+1,  self.dx+4, self.dy, 10)
+        bullet.parent = self
         self.bullets.append(bullet)
-        return bullet
+        self.children.append(bullet)
 
     def toggle_top_laser(self):
         self.top_laser = not self.top_laser
