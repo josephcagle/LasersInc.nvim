@@ -263,6 +263,12 @@ class EntityList:
     def __iter__(self):
         return self.list.__iter__()
 
+    def get_all_in_tree(self):
+        # copy-pasted from the internet somewhere lol
+        flat_map = lambda f, xs: [y for ys in xs for y in f(ys)]
+
+        return flat_map(lambda entity: entity.get_all_descendants_plus_self(), self)
+
 
 class Entity:
     def __init__(self, x, y, width, height, transparent=True):
@@ -300,6 +306,19 @@ class Entity:
 
     def sprite(self):
         raise NotImplementedError()
+
+
+    def get_all_descendants(self):
+        current_list = []
+        current_list.extend(self.children)
+        for child in self.children:
+            current_list.extend(child.get_all_descendants())
+        return current_list
+
+    def get_all_descendants_plus_self(self):
+        list = self.get_all_descendants()
+        list.append(self)
+        return list
 
 
     def is_intersecting_with(self, other):
