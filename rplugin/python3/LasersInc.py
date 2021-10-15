@@ -203,7 +203,12 @@ class LasersInc(object):
             self.buf_draw(0, 0, self.background_layers[i].lines(), transparent=True)
 
         # self.buf_draw(0, 0, ['frame %s' % self.frame_num], transparent=True)
-        for entity in sorted(self.entities, key = lambda entity: entity.z_order):
+
+        for entity in \
+            sorted(
+                self.entities.get_all_in_tree(),
+                key = lambda entity: entity.z_order
+            ):
             self.buf_draw(entity.x,
                           entity.y,
                           entity.sprite(),
