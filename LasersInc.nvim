@@ -9,6 +9,8 @@ let &runtimepath.=','.escape(expand('<sfile>:p:h'), '\,')
 " register our python code
 autocmd VimEnter * call s:startTheGame()
 
+" disable vim's built-in keybinds
+source disable.vim
 " set up controls
 nnoremap <silent> h :doautocmd User h_Pressed<CR>
 nnoremap <silent> j :doautocmd User j_Pressed<CR>
