@@ -12,13 +12,13 @@ autocmd VimEnter * call s:startTheGame()
 " disable vim's built-in keybinds
 source disable.vim
 " set up controls
-nnoremap <silent> h :doautocmd User h_Pressed<CR>
-nnoremap <silent> j :doautocmd User j_Pressed<CR>
-nnoremap <silent> k :doautocmd User k_Pressed<CR>
-nnoremap <silent> l :doautocmd User l_Pressed<CR>
-nnoremap <silent> o :doautocmd User o_Pressed<CR>
-nnoremap <silent> O :doautocmd User Shift_o_Pressed<CR>
-nnoremap <silent> <Space> :doautocmd User Space_Pressed<CR>
+nnoremap <silent> h :doautocmd User LeftPressed<CR>
+nnoremap <silent> j :doautocmd User DownPressed<CR>
+nnoremap <silent> k :doautocmd User UpPressed<CR>
+nnoremap <silent> l :doautocmd User RightPressed<CR>
+nnoremap <silent> o :doautocmd User BottomLaserTriggered<CR>
+nnoremap <silent> O :doautocmd User TopLaserTriggered<CR>
+nnoremap <silent> <Space> :doautocmd User MainCannonTriggered<CR>
 
 " highlight groups for statusline
 highlight StatusLine ctermfg=DarkGray ctermbg=White

@@ -215,17 +215,17 @@ class LasersInc(object):
                           transparent=entity.transparent)
 
 
-    @pynvim.autocmd('User', pattern="h_Pressed")
-    def on_h_pressed(self):
+    @pynvim.autocmd('User', pattern="LeftPressed")
+    def on_left_pressed(self):
         self.accelerate_spaceship_left()
-    @pynvim.autocmd('User', pattern="j_Pressed")
-    def on_j_pressed(self):
+    @pynvim.autocmd('User', pattern="DownPressed")
+    def on_down_pressed(self):
         self.accelerate_spaceship_down()
-    @pynvim.autocmd('User', pattern="k_Pressed")
-    def on_k_pressed(self):
+    @pynvim.autocmd('User', pattern="UpPressed")
+    def on_up_pressed(self):
         self.accelerate_spaceship_up()
-    @pynvim.autocmd('User', pattern="l_Pressed")
-    def on_l_pressed(self):
+    @pynvim.autocmd('User', pattern="RightPressed")
+    def on_right_pressed(self):
         self.accelerate_spaceship_right()
 
     def accelerate_spaceship_left(self):
@@ -241,14 +241,14 @@ class LasersInc(object):
         self.spaceship.dx += \
             math.hypot(self.spaceship.dx, self.spaceship.dy) * 0.1 + 0.35
 
-    @pynvim.autocmd('User', pattern="Space_Pressed")
+    @pynvim.autocmd('User', pattern="MainCannonTriggered")
     def shoot_player_bullet(self):
         self.spaceship.shoot_bullet()
 
-    @pynvim.autocmd('User', pattern="Shift_o_Pressed")
+    @pynvim.autocmd('User', pattern="TopLaserTriggered")
     def toggle_player_top_laser(self):
         self.spaceship.toggle_top_laser()
-    @pynvim.autocmd('User', pattern="o_Pressed")
+    @pynvim.autocmd('User', pattern="BottomLaserTriggered")
     def toggle_player_bottom_laser(self):
         self.spaceship.toggle_bottom_laser()
 
