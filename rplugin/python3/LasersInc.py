@@ -17,6 +17,10 @@ class LasersInc(object):
     def __init__(self, nvim):
         self.nvim = nvim
 
+        self.prefs = {}
+        self.prefs["controls"] = {}
+        self.load_controls()
+
         self.frame_num = 0
 
         self.frame_buf = []
@@ -38,6 +42,22 @@ class LasersInc(object):
         self.nvim.command('echom "%s"\n' % message.replace('"', '\\"'))
     ## test
     # self.printMessage('"ain\'t it workin\' yet?"')
+
+    def load_controls(self):
+        prefs_file = open("data/game_controls.properties", "r")
+        lines = prefs_file.readlines()
+
+        self.nvim.command("source disable.vim")
+
+        for line in lines:
+            if line.startswith("#") or len(line.strip()) == 0:
+                continue
+            parts = line.split("=")
+            key = parts[0]
+            value = "=".join(parts[1:]).strip()
+            self.prefs["controls"][key] = value
+            self.nvim.command(f"nnoremap <silent> {value} :doautocmd User {key}<CR>")
+        # self.print_message(str(self.prefs))
 
 
     @pynvim.command('LasersInc', nargs='*', range='', sync=False)

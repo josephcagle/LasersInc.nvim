@@ -9,17 +9,6 @@ let &runtimepath.=','.escape(expand('<sfile>:p:h'), '\,')
 " register our python code
 autocmd VimEnter * call s:startTheGame()
 
-" disable vim's built-in keybinds
-source disable.vim
-" set up controls
-nnoremap <silent> h :doautocmd User LeftPressed<CR>
-nnoremap <silent> j :doautocmd User DownPressed<CR>
-nnoremap <silent> k :doautocmd User UpPressed<CR>
-nnoremap <silent> l :doautocmd User RightPressed<CR>
-nnoremap <silent> o :doautocmd User BottomLaserTriggered<CR>
-nnoremap <silent> O :doautocmd User TopLaserTriggered<CR>
-nnoremap <silent> <Space> :doautocmd User MainCannonTriggered<CR>
-
 " highlight groups for statusline
 highlight StatusLine ctermfg=DarkGray ctermbg=White
 highlight StatusLineTitle ctermfg=Black ctermbg=Gray
