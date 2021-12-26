@@ -19,7 +19,6 @@ class LasersInc(object):
 
         self.prefs = {}
         self.prefs["controls"] = {}
-        self.load_controls()
 
         self.frame_num = 0
 
@@ -64,6 +63,8 @@ class LasersInc(object):
     def start(self, args, range):
         if self.running:
             raise RuntimeError("LasersInc is already running")
+
+        self.load_controls()
 
         # create screen
         self.frame_buf = self.EMPTY_BUF.copy()
