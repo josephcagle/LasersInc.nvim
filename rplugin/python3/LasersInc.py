@@ -258,30 +258,62 @@ class LasersInc(object):
 
     @pynvim.autocmd('User', pattern="LeftPressed")
     def on_left_pressed(self):
-        self.accelerate_spaceship_left()
+        self.process_input("LeftPressed")
 
     @pynvim.autocmd('User', pattern="DownPressed")
     def on_down_pressed(self):
-        if self.menu and self.menu.shown:
-            self.menu.select_next_option()
-            return
-        self.accelerate_spaceship_down()
+        self.process_input("DownPressed")
 
     @pynvim.autocmd('User', pattern="UpPressed")
     def on_up_pressed(self):
-        if self.menu and self.menu.shown:
-            self.menu.select_previous_option()
-            return
-        self.accelerate_spaceship_up()
+        self.process_input("UpPressed")
 
     @pynvim.autocmd('User', pattern="RightPressed")
     def on_right_pressed(self):
-        self.accelerate_spaceship_right()
+        self.process_input("RightPressed")
 
     @pynvim.autocmd('User', pattern="EnterPressed")
     def on_enter_pressed(self):
+        self.process_input("EnterPressed")
+
+    @pynvim.autocmd('User', pattern="MainCannonTriggered")
+    def on_main_cannon_triggered(self):
+        self.process_input("MainCannonTriggered")
+
+    @pynvim.autocmd('User', pattern="TopLaserTriggered")
+    def on_top_laser_triggered(self):
+        self.process_input("TopLaserTriggered")
+
+    @pynvim.autocmd('User', pattern="BottomLaserTriggered")
+    def on_bottom_laser_triggered(self):
+        self.process_input("BottomLaserTriggered")
+
+
+    def process_input(self, event_type):
         if self.menu and self.menu.shown:
-            self.menu.confirm_option()
+            if event_type == "EnterPressed":
+                self.menu.confirm_option()
+            elif event_type == "DownPressed":
+                self.menu.select_next_option()
+            elif event_type == "UpPressed":
+                self.menu.select_previous_option()
+            return
+
+        if event_type == "LeftPressed":
+            self.accelerate_spaceship_left()
+        elif event_type == "DownPressed":
+            self.accelerate_spaceship_down()
+        elif event_type == "UpPressed":
+            self.accelerate_spaceship_up()
+        elif event_type == "RightPressed":
+            self.accelerate_spaceship_right()
+        elif event_type == "MainCannonTriggered":
+            self.spaceship.shoot_bullet()
+        elif event_type == "TopLaserTriggered":
+            self.spaceship.toggle_top_laser()
+        elif event_type == "BottomLaserTriggered":
+            self.spaceship.toggle_bottom_laser()
+
 
 
     def accelerate_spaceship_left(self):
@@ -296,17 +328,6 @@ class LasersInc(object):
     def accelerate_spaceship_right(self):
         self.spaceship.dx += \
             math.hypot(self.spaceship.dx, self.spaceship.dy) * 0.1 + 0.35
-
-    @pynvim.autocmd('User', pattern="MainCannonTriggered")
-    def shoot_player_bullet(self):
-        self.spaceship.shoot_bullet()
-
-    @pynvim.autocmd('User', pattern="TopLaserTriggered")
-    def toggle_player_top_laser(self):
-        self.spaceship.toggle_top_laser()
-    @pynvim.autocmd('User', pattern="BottomLaserTriggered")
-    def toggle_player_bottom_laser(self):
-        self.spaceship.toggle_bottom_laser()
 
 
     def update_statusline(self):
