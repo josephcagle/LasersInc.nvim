@@ -15,6 +15,10 @@ highlight StatusLineTitle ctermfg=Black ctermbg=Gray
 highlight StatusLineRed ctermfg=DarkRed ctermbg=Gray
 highlight StatusLineGreen ctermfg=Green ctermbg=Gray
 
+" clear colors for menus
+highlight clear Pmenu
+highlight clear VertSplit
+
 function s:startTheGame()
     UpdateRemotePlugins
     echo " "

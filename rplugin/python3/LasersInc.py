@@ -38,6 +38,17 @@ class LasersInc(object):
 
         self.game_paused = False
 
+        self.menu = Menu(
+            self.nvim,
+            30,
+            5,
+            "Welcome, Adventurer!",
+            ["LASERS INC"],
+            ["Start Game"],
+            lambda x: self.menu.hide()
+        )
+
+
     def print_message(self, message):
         self.nvim.command('echom "%s"\n' % message.replace('"', '\\"'))
     ## test
@@ -58,6 +69,8 @@ class LasersInc(object):
             self.prefs["controls"][key] = value
             self.nvim.command(f"nnoremap <silent> {value} :doautocmd User {key}<CR>")
         # self.print_message(str(self.prefs))
+
+        self.nvim.command("nnoremap <silent> <CR> :doautocmd User EnterPressed<CR>")
 
 
     @pynvim.command('LasersInc', nargs='*', range='', sync=False)
@@ -84,10 +97,13 @@ class LasersInc(object):
         for i in builtins.range(4):
             self.background_layers.append(Starfield(1+i))
 
+        self.menu.show()
+
         self.running = True
         while self.running:
             self.nvim.command('doautocmd User GameTick')
             sleep(1 / TARGET_FPS)
+
 
 
     @pynvim.command('LasersIncStop')
@@ -217,7 +233,7 @@ class LasersInc(object):
         for entity in self.entities:
             self.update_entity(entity, delta_multiplier)
 
-        if sometimes(1 / (TARGET_FPS * 20)):
+        if sometimes(1 / (TARGET_FPS * 20)) and not (self.menu and self.menu.shown):
             self.entities.add_entity(AlienMinion(GAME_WIDTH - 2, int(random()*GAME_HEIGHT)))
 
         self.update_statusline()
@@ -243,15 +259,30 @@ class LasersInc(object):
     @pynvim.autocmd('User', pattern="LeftPressed")
     def on_left_pressed(self):
         self.accelerate_spaceship_left()
+
     @pynvim.autocmd('User', pattern="DownPressed")
     def on_down_pressed(self):
+        if self.menu and self.menu.shown:
+            self.menu.select_next_option()
+            return
         self.accelerate_spaceship_down()
+
     @pynvim.autocmd('User', pattern="UpPressed")
     def on_up_pressed(self):
+        if self.menu and self.menu.shown:
+            self.menu.select_previous_option()
+            return
         self.accelerate_spaceship_up()
+
     @pynvim.autocmd('User', pattern="RightPressed")
     def on_right_pressed(self):
         self.accelerate_spaceship_right()
+
+    @pynvim.autocmd('User', pattern="EnterPressed")
+    def on_enter_pressed(self):
+        if self.menu and self.menu.shown:
+            self.menu.confirm_option()
+
 
     def accelerate_spaceship_left(self):
         self.spaceship.dx -= \
@@ -388,7 +419,7 @@ class HealthyEntity(Entity):
 
 class Spaceship(HealthyEntity):
     def __init__(self):
-        super().__init__(0, 0, 3, 3, 100)
+        super().__init__(4, 8, 3, 3, 100)
         # spaceship should always be on top
         self.z_order = inf
         self.bullets = []
@@ -553,4 +584,81 @@ from random import random
 def sometimes(fraction):
     return fraction > random()
 
+
+class Menu:
+    def __init__(self, nvim, width, height, title, display_lines, options, callback):
+        self.nvim = nvim
+        self.width = width
+        self.height = height
+        self.title = title.strip()
+        self.display_lines = display_lines
+        self.options = list(map(lambda line: line.strip(), options))
+        self.callback = callback
+
+        self.shown = False
+        self.current_selected_option = 0
+        self.win = None
+        self.buf = nvim.api.create_buf(False, False)
+
+        self.draw()
+
+
+    def show(self):
+        if self.shown: return
+        self.shown = True
+
+        self.win = self.nvim.api.open_win(self.buf, False, {
+            "relative": "editor",
+            "width": self.width,
+            "height": self.height,
+            "row": round(GAME_HEIGHT / 2 - (self.height / 2)),
+            "col": round(GAME_WIDTH / 2 - (self.width / 2)),
+            "border": "rounded"
+        })
+
+    def hide(self):
+        self.nvim.api.win_close(self.win, True)
+        self.shown = False
+
+    def draw(self):
+        self.nvim.api.buf_set_lines(self.buf, 0, -1, False, self._build_menu())
+
+    def select_next_option(self):
+        self.current_selected_option += 1
+        if self.current_selected_option == len(self.options):
+            self.current_selected_option = 0
+        self.draw()
+
+    def select_previous_option(self):
+        self.current_selected_option -= 1
+        if self.current_selected_option == -1:
+            self.current_selected_option = len(self.options)-1
+        self.draw()
+
+    def confirm_option(self):
+        self.callback(self.current_selected_option)
+        pass
+
+    import math
+    def _build_menu(self):
+        def pad(s):
+            num_spaces = self.width - len(s)
+            return (" " * math.floor(num_spaces/2)) + s + (" " * math.ceil(num_spaces/2))
+
+        lines = []
+
+        title = self.title.strip()
+        if len(title) > 0:
+            lines.append(pad(title))
+            lines.append("")
+
+        for line_to_display in self.display_lines:
+            lines.append(pad(line_to_display))
+        lines.append("")
+
+        for i, option in enumerate(self.options):
+            selected = i == self.current_selected_option
+            lines.append(pad(f"{'>' if selected else ' '} {option}"))
+
+        return lines
 
