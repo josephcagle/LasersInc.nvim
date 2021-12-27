@@ -36,6 +36,7 @@ class LasersInc(object):
         self.player_lives = 3
         self.game_over = False
 
+        self.game_paused = False
 
     def print_message(self, message):
         self.nvim.command('echom "%s"\n' % message.replace('"', '\\"'))
@@ -205,6 +206,9 @@ class LasersInc(object):
 
 
     def calc_updates(self):
+        if self.game_paused:
+            return
+
         delta_multiplier = 1.0  # TODO: calculate based on real UPS
 
         for i in range(len(self.background_layers)):
