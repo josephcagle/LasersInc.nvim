@@ -592,9 +592,13 @@ class AlienMinion(Enemy):
     def on_event(self, event_type, *data):
         if event_type == "intersection":
             other_entity = data[0]
+
             if isinstance(other_entity, Bullet):
                 self.health -= other_entity.get_damage_value()
             if self.health <= 0: self.delete_me = True
+
+            if isinstance(other_entity, Spaceship):
+                self.delete_me = True
 
 
 
