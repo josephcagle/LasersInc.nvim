@@ -532,7 +532,7 @@ class Enemy(HealthyEntity):
     def __init__(self, x, y, width, height, health):
         super().__init__(x, y, width, height, health)
 
-class AlienMinion(HealthyEntity):
+class AlienMinion(Enemy):
     def __init__(self, x, y):
         super().__init__(x, y, 2, 2, 10)
         self.update_count = 0.0
