@@ -90,8 +90,18 @@ class LasersInc(object):
 
         # reset state
         self.entities = EntityList()
-        self.spaceship = Spaceship()
-        self.entities.add_entity(self.spaceship)
+
+        def spawn_new_spaceship():
+            self.spaceship = Spaceship()
+            self.spaceship.on_death = spawn_new_spaceship
+            self.entities.add_entity(self.spaceship)
+            self.player_lives -= 1
+            if self.player_lives < 0:
+                # TODO: game over
+                self.player_lives = 0
+
+        spawn_new_spaceship()
+        self.player_lives += 1
 
         self.background_layers = []
         for i in builtins.range(4):
@@ -437,6 +447,9 @@ class HealthyEntity(Entity):
         self.max_health = health
         self.health = health
 
+    def die(self):
+        raise NotImplementedError()
+
 
 class Spaceship(HealthyEntity):
     def __init__(self):
@@ -447,6 +460,9 @@ class Spaceship(HealthyEntity):
         self.top_laser = False
         self.bottom_laser = False
         self.capacitor_charge = 8.0
+        self.dying = False
+        self.animation_progress = 0.0
+        self.on_death = None
 
     def sprite(self):
         return_val = [
@@ -454,6 +470,12 @@ class Spaceship(HealthyEntity):
                 "==>",
                 "/>"
                 ]
+
+        if self.dying:
+            if math.floor(self.animation_progress * 100) % 30 < 15:
+                return [""]
+            else:
+                return return_val
 
         if self.top_laser:
             return_val[0] += "X" + ("=" * (GAME_WIDTH - (int(self.x)+3)))
@@ -466,6 +488,15 @@ class Spaceship(HealthyEntity):
         self.dx *= 1 - (0.05 * delta_multiplier)
         self.dy *= 1 - (0.15 * delta_multiplier)
         Entity.update(self, delta_multiplier)
+
+        if self.dying:
+            if self.animation_progress >= 1:
+                self.top_laser = False
+                self.bottom_laser = False
+                self.delete_me = True
+                self.on_death()
+                return
+            self.animation_progress += 1/10 * delta_multiplier
 
         if self.top_laser:
             self.capacitor_charge -= 0.2
@@ -489,6 +520,13 @@ class Spaceship(HealthyEntity):
         self.top_laser = not self.top_laser
     def toggle_bottom_laser(self):
         self.bottom_laser = not self.bottom_laser
+
+    def die(self):
+        self.dying = True
+
+    def on_event(self, event_type, *data):
+        if event_type == "intersection" and isinstance(data[0], Enemy):
+            self.die()
 
 
 
