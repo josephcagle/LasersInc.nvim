@@ -702,7 +702,6 @@ class Menu:
         self.callback(self.current_selected_option)
         pass
 
-    import math
     def _build_menu(self):
         def pad(s):
             num_spaces = self.width - len(s)
