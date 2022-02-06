@@ -21,6 +21,9 @@ class LasersInc(object):
         self.prefs["controls"] = {}
 
         self.frame_num = 0
+        # basically frame_num but adjusted for real time
+        # (based on delta_multiplier each frame)
+        self.tick_interval_count = 0.0
 
         self.frame_buf = []
         self.EMPTY_BUF = []
@@ -179,7 +182,7 @@ class LasersInc(object):
 
 
     # recursive helper function for calc_updates
-    def update_entity(self, entity, delta_multiplier):
+    def update_entity(self, entity, delta_multiplier, tick_interval_count):
         if entity.delete_me:
             if entity.parent:
                 entity.parent.children.remove(entity)
@@ -188,7 +191,7 @@ class LasersInc(object):
             else: raise RuntimeError("can't find parent for entity")
             return
 
-        entity.update(delta_multiplier)
+        entity.update(delta_multiplier, tick_interval_count)
 
         if entity.delete_me:
             if entity.parent:
@@ -228,7 +231,7 @@ class LasersInc(object):
 
         if len(entity.children) > 0:
             for child in entity.children:
-                self.update_entity(child, delta_multiplier)
+                self.update_entity(child, delta_multiplier, tick_interval_count)
 
 
     def calc_updates(self):
@@ -237,11 +240,13 @@ class LasersInc(object):
 
         delta_multiplier = 1.0  # TODO: calculate based on real UPS
 
+        self.tick_interval_count += delta_multiplier
+
         for i in range(len(self.background_layers)):
             self.background_layers[i].scroll(1.4 * delta_multiplier)
 
         for entity in self.entities:
-            self.update_entity(entity, delta_multiplier)
+            self.update_entity(entity, delta_multiplier, self.tick_interval_count)
 
         if sometimes(1 / (TARGET_FPS * 20)) and not (self.menu and self.menu.shown):
             self.entities.add_entity(AlienMinion(GAME_WIDTH - 2, int(random()*GAME_HEIGHT)))
@@ -394,7 +399,7 @@ class Entity:
         self.parent = None
 
 
-    def update(self, delta_multiplier):
+    def update(self, delta_multiplier, tick_interval_count):
         self.x += self.dx * delta_multiplier
         self.y += self.dy * delta_multiplier
         # if self.x < 0:
@@ -484,10 +489,10 @@ class Spaceship(HealthyEntity):
 
         return return_val
 
-    def update(self, delta_multiplier):
+    def update(self, delta_multiplier, tick_interval_count):
         self.dx *= 1 - (0.05 * delta_multiplier)
         self.dy *= 1 - (0.15 * delta_multiplier)
-        Entity.update(self, delta_multiplier)
+        Entity.update(self, delta_multiplier, tick_interval_count)
 
         if self.dying:
             if self.animation_progress >= 1:
@@ -541,7 +546,7 @@ class Bullet(Entity):
     def sprite(self):
         return ["-"]
 
-    def update(self, delta_multiplier):
+    def update(self, delta_multiplier, tick_interval_count):
         self.dx *= 1 - (0.02 * delta_multiplier)
         self.dy *= 1 - (0.2 * delta_multiplier)
         self.x += self.dx * delta_multiplier
@@ -573,13 +578,11 @@ class Enemy(HealthyEntity):
 class AlienMinion(Enemy):
     def __init__(self, x, y):
         super().__init__(x, y, 2, 2, 10)
-        self.update_count = 0.0
 
-    def update(self, delta_multiplier):
-        self.update_count += delta_multiplier
-        if int(self.update_count) % int(TARGET_FPS * 1.5) == 0:
+    def update(self, delta_multiplier, tick_interval_count):
+        if int(tick_interval_count) % int(TARGET_FPS * 1.5) == 0:
             self.y += 1
-        elif (int(self.update_count) - int(TARGET_FPS * 1.0)) \
+        elif (int(tick_interval_count) - int(TARGET_FPS * 1.0)) \
             % int(TARGET_FPS * 1.5) == 0:
             self.y -= 1
 
