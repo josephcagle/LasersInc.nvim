@@ -267,7 +267,7 @@ class LasersInc(object):
             ):
             self.buf_draw(entity.x,
                           entity.y,
-                          entity.sprite(),
+                          entity.texture(),
                           transparent=entity.transparent)
 
 
@@ -418,7 +418,7 @@ class Entity:
     def on_event(self, event_type, *data):
         pass
 
-    def sprite(self):
+    def texture(self):
         raise NotImplementedError()
 
 
@@ -469,7 +469,7 @@ class Spaceship(HealthyEntity):
         self.animation_progress = 0.0
         self.on_death = None
 
-    def sprite(self):
+    def texture(self):
         return_val = [
                 "\\>",
                 "==>",
@@ -543,7 +543,7 @@ class Bullet(Entity):
         self.dy = dy
         self.base_damage_value = damage_value / math.hypot(dx, dy)
 
-    def sprite(self):
+    def texture(self):
         return ["-"]
 
     def update(self, delta_multiplier, tick_interval_count):
@@ -586,7 +586,7 @@ class AlienMinion(Enemy):
             % int(TARGET_FPS * 1.5) == 0:
             self.y -= 1
 
-    def sprite(self):
+    def texture(self):
         return [
                 "oo",
                 "''"
