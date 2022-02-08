@@ -624,6 +624,66 @@ class AlienMinion(Enemy):
 
 
 
+class Particle(Entity):
+    def __init__(self, x, y, width, height, z_order):
+        super().__init__(x, y, width, height)
+        self.last_tick_interval_count = 0.0
+        self.z_order = z_order
+
+    def texture(self):
+        raise NotImplementedError()
+
+    def update(self, delta_multiplier, tick_interval_count):
+        self.last_tick_interval_count = tick_interval_count
+
+
+class Explosion(Particle):
+    def __init__(self, x, y, z_order):
+        super().__init__(x, y, 3, 3, z_order)
+        self.first_tick_interval_count = -1
+
+    def texture(self):
+        if self.first_tick_interval_count < 0: return [""]
+
+        frames = [
+            [
+                "   ",
+                " o ",
+                "   ",
+            ],
+            [
+                " _ ",
+                "|@|",
+                " ` ",
+            ],
+            [
+                "ooo",
+                "oXo",
+                "ooo",
+            ],
+            [
+                "...",
+                ".x.",
+                "...",
+            ],
+            [
+                "   ",
+                " x ",
+                "   ",
+            ],
+        ]
+        return frames[math.floor(
+            (self.last_tick_interval_count - self.first_tick_interval_count) / 2
+        )]
+
+    def update(self, delta_multiplier, tick_interval_count):
+        super().update(delta_multiplier, tick_interval_count)
+        if self.first_tick_interval_count < 0:
+            self.first_tick_interval_count = tick_interval_count
+        if self.last_tick_interval_count - self.first_tick_interval_count >= 10:
+            self.delete_me = True
+
+
 class Background:
     def lines(self):
         raise NotImplementedError()
