@@ -248,7 +248,7 @@ class LasersInc(object):
         for entity in self.entities:
             self.update_entity(entity, delta_multiplier, self.tick_interval_count)
 
-        if sometimes(1 / (TARGET_FPS * 20)) and not (self.menu and self.menu.shown):
+        if sometimes(1 / (TARGET_FPS * 10)) and not (self.menu and self.menu.shown):
             self.entities.add_entity(AlienMinion(GAME_WIDTH - 2, int(random()*GAME_HEIGHT)))
 
         self.update_statusline()
