@@ -458,7 +458,7 @@ class HealthyEntity(Entity):
 
 class Spaceship(HealthyEntity):
     def __init__(self):
-        super().__init__(4, 8, 3, 3, 100)
+        super().__init__(4, 8, 4, 3, 100)
         self.last_tick_interval_count = 0.0
         # spaceship should always be on top
         self.z_order = inf
@@ -471,11 +471,27 @@ class Spaceship(HealthyEntity):
         self.on_death = None
 
     def texture(self):
-        return_val = [
-                "\\>",
-                "==>",
-                "/>"
-                ]
+        frames = [ [
+           r" \>",
+            " ==>",
+            " />"
+        ],
+        [
+           r"-\>",
+            " ==>",
+            "-/>"
+        ],
+        [
+           r"=\>",
+            " ==>",
+            "=/>"
+        ],
+        [
+           r"-\>",
+            " ==>",
+            "-/>"
+        ]]
+        return_val = frames[math.floor(self.last_tick_interval_count) % 4]
 
         if self.dying:
             if math.floor(self.animation_progress * 100) % 30 < 15:
