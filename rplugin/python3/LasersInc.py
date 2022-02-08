@@ -511,7 +511,7 @@ class Spaceship(HealthyEntity):
 
         self.dx *= 1 - (0.05 * delta_multiplier)
         self.dy *= 1 - (0.15 * delta_multiplier)
-        Entity.update(self, delta_multiplier, tick_interval_count)
+        super().update(delta_multiplier, tick_interval_count)
 
         if self.dying:
             if self.animation_progress >= 1:
