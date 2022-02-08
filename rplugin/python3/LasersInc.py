@@ -459,6 +459,7 @@ class HealthyEntity(Entity):
 class Spaceship(HealthyEntity):
     def __init__(self):
         super().__init__(4, 8, 3, 3, 100)
+        self.last_tick_interval_count = 0.0
         # spaceship should always be on top
         self.z_order = inf
         self.bullets = []
@@ -490,6 +491,8 @@ class Spaceship(HealthyEntity):
         return return_val
 
     def update(self, delta_multiplier, tick_interval_count):
+        self.last_tick_interval_count = tick_interval_count
+
         self.dx *= 1 - (0.05 * delta_multiplier)
         self.dy *= 1 - (0.15 * delta_multiplier)
         Entity.update(self, delta_multiplier, tick_interval_count)
