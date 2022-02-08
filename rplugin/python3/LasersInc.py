@@ -460,8 +460,7 @@ class Spaceship(HealthyEntity):
     def __init__(self):
         super().__init__(4, 8, 4, 3, 100)
         self.last_tick_interval_count = 0.0
-        # spaceship should always be on top
-        self.z_order = inf
+        self.z_order = 1000
         self.bullets = []
         self.top_laser = False
         self.bottom_laser = False
