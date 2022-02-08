@@ -547,6 +547,9 @@ class Spaceship(HealthyEntity):
 
     def die(self):
         self.dying = True
+        expl = Explosion(self.x, self.y, self.z_order+1)
+        expl.parent = self
+        self.children.append(expl)
 
     def on_event(self, event_type, *data):
         if event_type == "intersection" and isinstance(data[0], Enemy):
