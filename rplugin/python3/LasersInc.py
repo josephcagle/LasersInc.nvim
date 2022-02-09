@@ -188,7 +188,7 @@ class LasersInc(object):
                 entity.parent.children.remove(entity)
             elif entity in self.entities:
                 self.entities.remove_entity(entity)
-            else: raise RuntimeError("can't find parent for entity")
+            else: raise RuntimeError(f"can't find parent for entity: {entity}")
             return
 
         entity.update(delta_multiplier, tick_interval_count)
@@ -198,7 +198,7 @@ class LasersInc(object):
                 entity.parent.children.remove(entity)
             elif entity in self.entities:
                 self.entities.remove_entity(entity)
-            else: raise RuntimeError("can't find parent for entity")
+            else: raise RuntimeError(f"can't find parent for entity: {entity}")
             return
 
         for other_entity in self.entities.get_all_in_tree():
