@@ -233,7 +233,7 @@ class LasersInc(object):
             self.update_entity(entity, delta_multiplier, self.tick_interval_count)
 
         if sometimes(1 / (TARGET_FPS * 10)) and not (self.menu and self.menu.shown):
-            self.entities.add_entity(AlienMinion(GAME_WIDTH - 2, int(random()*GAME_HEIGHT)))
+            self.entities.add_entity(AlienMinion(GAME_WIDTH - 10, int(random()*GAME_HEIGHT)))
 
         self.update_statusline()
 
@@ -625,13 +625,16 @@ class Enemy(HealthyEntity):
 class AlienMinion(Enemy):
     def __init__(self, x, y):
         super().__init__(x, y, 2, 2, 10)
+        self.direction = math.pi
+        self.speed = 0.4
 
     def update(self, delta_multiplier, tick_interval_count):
-        if int(tick_interval_count) % int(TARGET_FPS * 1.5) == 0:
-            self.y += 1
-        elif (int(tick_interval_count) - int(TARGET_FPS * 1.0)) \
-            % int(TARGET_FPS * 1.5) == 0:
-            self.y -= 1
+        self.direction += math.pi/TARGET_FPS
+        self.dx = self.speed * math.cos(self.direction) * 1.25 # attempt to correct for
+        self.dy = self.speed * math.sin(self.direction) * 0.8  # char aspect ratio
+        self.x += self.dx
+        self.y += self.dy
+
 
     def texture(self):
         return [
