@@ -576,6 +576,10 @@ class Bullet(Entity):
 
     def on_event(self, event_type, *data):
         if event_type == "intersection" and not isinstance(data[0], Bullet):
+            expl = Explosion(self.x-1, self.y-1, self.z_order+1)
+            expl.parent = self
+            self.children.append(expl)
+
             self.delete_me = True
 
 class SpaceshipLaser(Entity):
@@ -609,6 +613,9 @@ class SpaceshipLaser(Entity):
     def on_event(self, event_type, *data):
         if event_type == "intersection" and isinstance(data[0], Enemy):
             data[0].health -= self.base_damage_value
+            expl = Explosion(data[0].x, self.y-1, self.z_order+1)
+            expl.parent = self
+            self.children.append(expl)
 
 
 class Enemy(HealthyEntity):
