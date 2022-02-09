@@ -209,27 +209,6 @@ class LasersInc(object):
                 # (TODO: maybe rename the method later)
                 entity.on_event("intersection", other_entity)
 
-        if isinstance(entity, Spaceship):
-            if entity.top_laser or entity.bottom_laser:
-
-                for other_entity in self.entities.get_all_in_tree():
-                    if other_entity is entity:
-                        continue
-
-                    if ( other_entity.y
-                            <=
-                         entity.y + (0 if entity.top_laser else 2)
-                            <=
-                         other_entity.y + other_entity.height-1
-                       ) \
-                    and \
-                       ( entity.x + 2
-                            <=
-                         other_entity.x + other_entity.width-1
-                       ):
-
-                        other_entity.delete_me = True
-
         if len(entity.children) > 0:
             for child in entity.children:
                 self.update_entity(child, delta_multiplier, tick_interval_count)
@@ -464,8 +443,10 @@ class Spaceship(HealthyEntity):
         self.last_tick_interval_count = 0.0
         self.z_order = 1000
         self.bullets = []
-        self.top_laser = False
-        self.bottom_laser = False
+        self.top_laser = SpaceshipLaser(self, 3, 0)
+        self.bottom_laser = SpaceshipLaser(self, 3, 2)
+        self.children.append(self.top_laser)
+        self.children.append(self.bottom_laser)
         self.capacitor_charge = 8.0
         self.dying = False
         self.animation_progress = 0.0
@@ -500,11 +481,6 @@ class Spaceship(HealthyEntity):
             else:
                 return return_val
 
-        if self.top_laser:
-            return_val[0] += "X" + ("=" * (GAME_WIDTH - (int(self.x)+3)))
-        if self.bottom_laser:
-            return_val[2] += "X" + ("=" * (GAME_WIDTH - (int(self.x)+3)))
-
         return return_val
 
     def update(self, delta_multiplier, tick_interval_count):
@@ -516,21 +492,23 @@ class Spaceship(HealthyEntity):
 
         if self.dying:
             if self.animation_progress >= 1:
-                self.top_laser = False
-                self.bottom_laser = False
+                if self.top_laser.on:
+                    self.top_laser.toggle()
+                if self.bottom_laser.on:
+                    self.bottom_laser.toggle()
                 self.delete_me = True
                 self.on_death()
                 return
             self.animation_progress += 1/10 * delta_multiplier
 
-        if self.top_laser:
+        if self.top_laser.on:
             self.capacitor_charge -= 0.2
-        if self.bottom_laser:
+        if self.bottom_laser.on:
             self.capacitor_charge -= 0.2
 
         if self.capacitor_charge <= 0:
-            self.top_laser = False
-            self.bottom_laser = False
+            self.top_laser.on = False
+            self.bottom_laser.on = False
 
         if self.capacitor_charge <= 8.0:
             self.capacitor_charge += 0.02
@@ -542,9 +520,9 @@ class Spaceship(HealthyEntity):
         self.children.append(bullet)
 
     def toggle_top_laser(self):
-        self.top_laser = not self.top_laser
+        self.top_laser.toggle()
     def toggle_bottom_laser(self):
-        self.bottom_laser = not self.bottom_laser
+        self.bottom_laser.toggle()
 
     def die(self):
         self.dying = True
@@ -622,8 +600,8 @@ class SpaceshipLaser(Entity):
         self.width = GAME_WIDTH - self.x
 
     def on_event(self, event_type, *data):
-        if event_type == "intersection" and isinstance(data[0], HealthyEntity):
-            data[0].health = 0
+        if event_type == "intersection" and isinstance(data[0], Enemy):
+            data[0].health -= self.base_damage_value
 
 
 class Enemy(HealthyEntity):
