@@ -203,6 +203,7 @@ class LasersInc(object):
 
         for other_entity in self.entities.get_all_in_tree():
             if entity is other_entity: continue
+            if entity.disable_hitbox or other_entity.disable_hitbox: continue
             if entity.is_intersecting_with(other_entity):
                 # call the event listener
                 # (TODO: maybe rename the method later)
@@ -394,6 +395,7 @@ class Entity:
         self.height = height
         self.transparent = transparent
         self.z_order = 0
+        self.disable_hitbox = False
         self.delete_me = False
         self.children = []
         self.parent = None
