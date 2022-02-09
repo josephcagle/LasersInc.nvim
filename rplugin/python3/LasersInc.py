@@ -662,6 +662,7 @@ class Explosion(Particle):
     def __init__(self, x, y, z_order):
         super().__init__(x, y, 3, 3, z_order)
         self.first_tick_interval_count = -1
+        self.disable_hitbox = True
 
     def texture(self):
         if self.first_tick_interval_count < 0: return [""]
