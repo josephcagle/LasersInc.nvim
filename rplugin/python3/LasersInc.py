@@ -184,11 +184,16 @@ class LasersInc(object):
         if entity.delete_me:
             if entity.parent:
                 entity.parent.children.remove(entity)
-                return True
             elif entity in self.entities:
                 self.entities.remove_entity(entity)
-                return True
             else: raise RuntimeError(f"can't find parent for entity: {entity}")
+
+            # save orphans
+            self.entities.extend(entity.children)
+            entity.parent = None
+
+            return True
+
         return False
 
 
@@ -348,6 +353,9 @@ class EntityList:
 
     def add_entity(self, entity):
         self.list.append(entity)
+
+    def extend(self, list):
+        self.list.extend(list)
 
     def remove_entity(self, entity):
         # TODO: validation
