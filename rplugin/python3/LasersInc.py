@@ -664,10 +664,7 @@ class Explosion(Particle):
         self.first_tick_interval_count = -1
         self.disable_hitbox = True
 
-    def texture(self):
-        if self.first_tick_interval_count < 0: return [""]
-
-        frames = [
+        self.frames = [
             [
                 "   ",
                 " o ",
@@ -694,16 +691,24 @@ class Explosion(Particle):
                 "   ",
             ],
         ]
-        return frames[math.floor(
-            (self.last_tick_interval_count - self.first_tick_interval_count) / 2
-        )]
+
+    def texture(self):
+        if self.first_tick_interval_count < 0: return [""]
+        return self.frames[self.get_animation_frame_num()]
 
     def update(self, delta_multiplier, tick_interval_count):
         super().update(delta_multiplier, tick_interval_count)
         if self.first_tick_interval_count < 0:
             self.first_tick_interval_count = tick_interval_count
-        if self.last_tick_interval_count - self.first_tick_interval_count >= 10:
+        if self.get_animation_frame_num() >= len(self.frames) - 1:
+            # the last frame has been shown, so
             self.delete_me = True
+
+    def get_animation_frame_num(self):
+        return math.floor(
+            (self.last_tick_interval_count - self.first_tick_interval_count) / 2
+        )
+
 
 
 class Background:
