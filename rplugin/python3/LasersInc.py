@@ -180,26 +180,25 @@ class LasersInc(object):
         self.render()
         self.calc_updates()
 
+    def delete_if_requested(self, entity):
+        if entity.delete_me:
+            if entity.parent:
+                entity.parent.children.remove(entity)
+                return True
+            elif entity in self.entities:
+                self.entities.remove_entity(entity)
+                return True
+            else: raise RuntimeError(f"can't find parent for entity: {entity}")
+        return False
+
 
     # recursive helper function for calc_updates
     def update_entity(self, entity, delta_multiplier, tick_interval_count):
-        if entity.delete_me:
-            if entity.parent:
-                entity.parent.children.remove(entity)
-            elif entity in self.entities:
-                self.entities.remove_entity(entity)
-            else: raise RuntimeError(f"can't find parent for entity: {entity}")
-            return
+        if self.delete_if_requested(entity): return
 
         entity.update(delta_multiplier, tick_interval_count)
 
-        if entity.delete_me:
-            if entity.parent:
-                entity.parent.children.remove(entity)
-            elif entity in self.entities:
-                self.entities.remove_entity(entity)
-            else: raise RuntimeError(f"can't find parent for entity: {entity}")
-            return
+        if self.delete_if_requested(entity): return
 
         for other_entity in self.entities.get_all_in_tree():
             if entity is other_entity: continue
