@@ -593,6 +593,38 @@ class Bullet(Entity):
         if event_type == "intersection" and not isinstance(data[0], Bullet):
             self.delete_me = True
 
+class SpaceshipLaser(Entity):
+    def __init__(self, parent_spaceship, offset_x, offset_y):
+
+        super().__init__(
+            parent_spaceship.x + offset_x, parent_spaceship.y + offset_y,
+            int(GAME_WIDTH - parent_spaceship.x - offset_x), 1
+        )
+        self.base_damage_value = 100
+        self.parent = parent_spaceship
+        self.offset_x = offset_x
+        self.offset_y = offset_y
+        self.on = False
+        self.disable_hitbox = True
+
+    def toggle(self):
+        self.on = not self.on
+        self.disable_hitbox = not self.disable_hitbox
+
+    def texture(self):
+        if self.on:
+            return [f"X{'='*int(self.width-1)}"]
+        return [""]
+
+    def update(self, delta_multiplier, tick_interval_count):
+        self.x = self.parent.x + self.offset_x
+        self.y = self.parent.y + self.offset_y
+        self.width = GAME_WIDTH - self.x
+
+    def on_event(self, event_type, *data):
+        if event_type == "intersection" and isinstance(data[0], HealthyEntity):
+            data[0].health = 0
+
 
 class Enemy(HealthyEntity):
     def __init__(self, x, y, width, height, health):
