@@ -6,6 +6,10 @@ import math
 
 import builtins
 
+import sys, os
+sys.path.append(f"{os.getcwd()}/rplugin/python3")
+
+
 GAME_WIDTH = 80
 GAME_HEIGHT = 18
 

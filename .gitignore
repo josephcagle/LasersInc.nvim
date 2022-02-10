@@ -1,4 +1,4 @@
 
-rplugin/python3/__pycache__/*
+**/__pycache__/**
 
 .vim/.ropeproject/*
