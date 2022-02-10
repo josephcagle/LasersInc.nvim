@@ -10,6 +10,7 @@ import sys, os
 sys.path.append(f"{os.getcwd()}/rplugin/python3")
 
 from base.entities import Entity, HealthyEntity
+from base.visualfx import Particle, ParallaxBackground
 
 
 GAME_WIDTH = 80
@@ -585,20 +586,6 @@ class AlienMinion(Enemy):
                 self.delete_me = True
 
 
-
-class Particle(Entity):
-    def __init__(self, x, y, width, height, z_order):
-        super().__init__(x, y, width, height)
-        self.last_tick_interval_count = 0.0
-        self.z_order = z_order
-
-    def texture(self):
-        raise NotImplementedError()
-
-    def update(self, delta_multiplier, tick_interval_count):
-        self.last_tick_interval_count = tick_interval_count
-
-
 class Explosion(Particle):
     def __init__(self, x, y, z_order):
         super().__init__(x, y, 3, 3, z_order)
@@ -650,19 +637,6 @@ class Explosion(Particle):
             (self.last_tick_interval_count - self.first_tick_interval_count) / 2
         )
 
-
-
-class Background:
-    def lines(self):
-        raise NotImplementedError()
-
-class ParallaxBackground(Background):
-    def __init__(self, parallax_distance):
-        self.parallax_distance = parallax_distance
-
-    # this method handles parallax_distance calculations
-    def moveCameraRight(self):
-        raise NotImplementedError()
 
 class Starfield(ParallaxBackground):
     def __init__(self, parallax_distance):
