@@ -12,8 +12,6 @@ import builtins
 import sys, os
 sys.path.append(f"{os.getcwd()}/rplugin/python3")
 
-from base.entities import Entity, HealthyEntity
-from base.visualfx import Particle, ParallaxBackground
 from gameobject.entities import Spaceship, AlienMinion
 from gameobject.visualfx import Starfield
 
