@@ -259,8 +259,8 @@ class LasersInc(object):
                 self.entities.get_all_in_tree(),
                 key = lambda entity: entity.z_order
             ):
-            self.buf_draw(entity.x,
-                          entity.y,
+            self.buf_draw(entity.x + entity.texture_offset_x,
+                          entity.y + entity.texture_offset_y,
                           entity.texture(),
                           transparent=entity.transparent)
 
