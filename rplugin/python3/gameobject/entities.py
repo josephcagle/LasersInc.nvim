@@ -8,7 +8,8 @@ from gameobject.visualfx import Explosion
 
 class Spaceship(HealthyEntity):
     def __init__(self):
-        super().__init__(4, 8, 4, 3, 100)
+        super().__init__(5, 8, 3, 3, 100)
+        self.texture_offset_x = -1
         self.last_tick_interval_count = 0.0
         self.z_order = 1000
         self.bullets = []
