@@ -192,7 +192,7 @@ class AlienMinion(Enemy):
     def __init__(self, x, y):
         super().__init__(x, y, 2, 2, 10)
         self.direction = math.pi
-        self.speed = 0.4
+        self.speed = 0.3
 
     def update(self, delta_multiplier, tick_interval_count):
         self.direction += math.pi/TARGET_FPS
@@ -200,6 +200,7 @@ class AlienMinion(Enemy):
         self.dy = self.speed * math.sin(self.direction) * 0.8  # char aspect ratio
         self.x += self.dx
         self.y += self.dy
+        self.x -= 0.2 # move left
 
 
     def texture(self):

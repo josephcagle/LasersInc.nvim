@@ -12,11 +12,14 @@ class Level01(Level):
         self.cycle_progression = 0.0
         self.entities = entities
         self.debug = debug
+        self.cycle_length = TARGET_FPS * 3
 
     def update(self, delta_multiplier, tick_interval_count):
         self.cycle_progression += delta_multiplier
-        if self.cycle_progression > TARGET_FPS * 3:
-            self.cycle_progression -= TARGET_FPS * 3
+        if self.cycle_progression > self.cycle_length:
+            self.cycle_progression -= self.cycle_length
             self.entities.add_entity(AlienMinion(GAME_WIDTH - 10, int(random()*GAME_HEIGHT)))
             # self.debug(f"entities: {list(map(lambda x: str(x), self.entities))}")
+            if self.cycle_length > 1 * TARGET_FPS:
+                self.cycle_length *= 0.9
 
