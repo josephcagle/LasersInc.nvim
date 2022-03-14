@@ -78,7 +78,9 @@ class Spaceship(HealthyEntity):
 
         if self.capacitor_charge <= 0:
             self.top_laser.on = False
+            self.top_laser.disable_hitbox = True
             self.bottom_laser.on = False
+            self.bottom_laser.disable_hitbox = True
 
         if self.capacitor_charge <= 8.0:
             self.capacitor_charge += 0.02
