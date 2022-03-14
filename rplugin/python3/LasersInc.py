@@ -15,6 +15,8 @@ sys.path.append(f"{os.getcwd()}/rplugin/python3")
 from gameobject.entities import Spaceship, AlienMinion
 from gameobject.visualfx import Starfield
 
+from levels.level01 import Level01
+
 
 from random import random
 def sometimes(fraction):
@@ -42,7 +44,7 @@ class LasersInc(object):
 
         self.running = False
 
-        self.entities = EntityList()
+        self.entities = None
         self.spaceship = None
         self.background_layers = []
 
@@ -60,6 +62,8 @@ class LasersInc(object):
             ["Start Game"],
             lambda x: self.menu.hide()
         )
+
+        self.level = None
 
 
     def print_message(self, message):
@@ -119,6 +123,8 @@ class LasersInc(object):
         self.background_layers = []
         for i in builtins.range(4):
             self.background_layers.append(Starfield(1+i))
+
+        self.level = Level01(self.entities, self.print_message)
 
         self.menu.show()
 
@@ -242,8 +248,8 @@ class LasersInc(object):
         for entity in self.entities:
             self.update_entity(entity, delta_multiplier, self.tick_interval_count)
 
-        if sometimes(1 / (TARGET_FPS * 10)) and not (self.menu and self.menu.shown):
-            self.entities.add_entity(AlienMinion(GAME_WIDTH - 10, int(random()*GAME_HEIGHT)))
+        if not self.menu or not self.menu.shown:
+            self.level.update(delta_multiplier, self.tick_interval_count)
 
         self.update_statusline()
 
