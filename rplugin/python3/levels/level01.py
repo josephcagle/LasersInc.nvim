@@ -1,7 +1,7 @@
 
 from random import random
 
-from gameobject.entities import AlienMinion
+from gameobject.entities import AlienMinion, BeefyMinion
 from LasersInc import TARGET_FPS, GAME_HEIGHT, GAME_WIDTH
 
 from levels.base_level import Level
@@ -18,7 +18,10 @@ class Level01(Level):
         self.cycle_progression += delta_multiplier
         if self.cycle_progression > self.cycle_length:
             self.cycle_progression -= self.cycle_length
-            self.entities.add_entity(AlienMinion(GAME_WIDTH - 10, int(random()*GAME_HEIGHT)))
+            if random() > 0.5:
+                self.entities.add_entity(BeefyMinion(GAME_WIDTH + 10, int(random()*GAME_HEIGHT)))
+            else:
+                self.entities.add_entity(AlienMinion(GAME_WIDTH + 10, int(random()*GAME_HEIGHT)))
             # self.debug(f"entities: {list(map(lambda x: str(x), self.entities))}")
             if self.cycle_length > 1 * TARGET_FPS:
                 self.cycle_length *= 0.9

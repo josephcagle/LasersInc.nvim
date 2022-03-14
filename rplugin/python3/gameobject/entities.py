@@ -192,16 +192,16 @@ class AlienMinion(Enemy):
     def __init__(self, x, y):
         super().__init__(x, y, 2, 2, 10)
         self.direction = math.pi
-        self.speed = 0.3
+        self.circle_speed = 0.3
+        self.forward_speed = 0.2
 
     def update(self, delta_multiplier, tick_interval_count):
         self.direction += math.pi/TARGET_FPS
-        self.dx = self.speed * math.cos(self.direction) * 1.25 # attempt to correct for
-        self.dy = self.speed * math.sin(self.direction) * 0.8  # char aspect ratio
+        self.dx = self.circle_speed * math.cos(self.direction) * 1.25 # attempt to correct for
+        self.dy = self.circle_speed * math.sin(self.direction) * 0.8  # char aspect ratio
         self.x += self.dx
         self.y += self.dy
-        self.x -= 0.2 # move left
-
+        self.x -= self.forward_speed
 
     def texture(self):
         return [
@@ -221,5 +221,16 @@ class AlienMinion(Enemy):
                 self.delete_me = True
 
 
+class BeefyMinion(AlienMinion):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.circle_speed = 0.2
+        self.health = 20
+        self.forward_speed = 0.1
 
+    def texture(self):
+            return [
+                    "MM",
+                    '""'
+                    ]
 
