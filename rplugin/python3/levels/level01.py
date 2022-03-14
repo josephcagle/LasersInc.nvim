@@ -9,6 +9,7 @@ from levels.base_level import Level
 
 class Level01(Level):
     def __init__(self, entities, debug):
+        super().__init__()
         self.cycle_progression = 0.0
         self.entities = entities
         self.debug = debug
