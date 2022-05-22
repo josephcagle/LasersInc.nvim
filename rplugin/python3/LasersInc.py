@@ -3,7 +3,8 @@ GAME_WIDTH = 80
 GAME_HEIGHT = 18
 
 # Everything in the game will assume the game is running at BASE_UPS ups,
-# and then we will scale everything up or down using delta_multiplier
+# and then we will scale everything up or down using delta_multiplier.
+# DON'T change this from 60 without redoing all the code to adjust
 BASE_UPS = 60
 
 TARGET_FPS = 60
@@ -259,7 +260,7 @@ class LasersInc(object):
         self.tick_interval_count += delta_multiplier
 
         for i in range(len(self.background_layers)):
-            self.background_layers[i].scroll(1.4 * delta_multiplier)
+            self.background_layers[i].scroll(1.2 * delta_multiplier)
 
         for entity in self.entities:
             self.update_entity(entity, delta_multiplier, self.tick_interval_count)
