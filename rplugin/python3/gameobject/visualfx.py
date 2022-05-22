@@ -76,7 +76,11 @@ class Explosion(Particle):
 
     def texture(self):
         if self.first_tick_interval_count < 0: return [""]
-        return self.frames[self.get_animation_frame_num()]
+        num = self.get_animation_frame_num()
+        if 0 <= num < len(self.frames):
+            return self.frames[num]
+        else:
+            return [""]
 
     def update(self, delta_multiplier, tick_interval_count):
         super().update(delta_multiplier, tick_interval_count)
