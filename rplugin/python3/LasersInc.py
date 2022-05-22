@@ -11,7 +11,7 @@ UPDATES_PER_FRAME = 3
 TARGET_UPS = TARGET_FPS * UPDATES_PER_FRAME
 
 import pynvim
-from time import sleep
+from time import sleep, time_ns
 import math
 import builtins
 
@@ -42,6 +42,9 @@ class LasersInc(object):
         # basically frame_num but adjusted for real time
         # (based on delta_multiplier each frame)
         self.tick_interval_count = 0.0
+        self.last_frame_timestamp = -1
+        self.time_since_last_frame = -1
+        self.current_real_fps = 0.0
 
         self.frame_buf = []
         self.EMPTY_BUF = []
@@ -196,6 +199,11 @@ class LasersInc(object):
 
     @pynvim.autocmd('User', pattern='GameTick', sync=True)
     def on_game_tick(self, *args):
+        now = time_ns()
+        self.time_since_last_frame = now - self.last_frame_timestamp
+        self.last_frame_timestamp = now
+        self.current_real_fps = 1e9 / self.time_since_last_frame
+
         self.frame_num += 1
         self.frame_buf = self.EMPTY_BUF.copy()
         self.draw_objects()
@@ -277,6 +285,8 @@ class LasersInc(object):
                           entity.y + entity.texture_offset_y,
                           entity.texture(),
                           transparent=entity.transparent)
+
+        self.buf_draw(0, 0, [f"{'{0:.3g}'.format(self.current_real_fps)} FPS"])
 
 
     @pynvim.autocmd('User', pattern="LeftPressed")
