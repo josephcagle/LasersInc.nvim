@@ -1,7 +1,7 @@
 
 import math
 
-from LasersInc import GAME_WIDTH, GAME_HEIGHT, TARGET_FPS
+from LasersInc import GAME_WIDTH, GAME_HEIGHT, BASE_UPS
 from base.entities import Entity, HealthyEntity
 from base.visualfx import Particle
 from gameobject.visualfx import Explosion
@@ -56,8 +56,8 @@ class Spaceship(HealthyEntity):
     def update(self, delta_multiplier, tick_interval_count):
         self.last_tick_interval_count = tick_interval_count
 
-        self.dx *= 1 - (0.05 * delta_multiplier)
-        self.dy *= 1 - (0.15 * delta_multiplier)
+        self.dx *= 0.95**delta_multiplier
+        self.dy *= 0.85**delta_multiplier
         super().update(delta_multiplier, tick_interval_count)
 
         if self.dying:
@@ -110,7 +110,7 @@ class Spaceship(HealthyEntity):
 class Bullet(Entity):
     def __init__(self, x, y, dx, dy, damage_value):
         super().__init__(x, y, 1, 1)
-        self.ttl = TARGET_FPS * 4
+        self.ttl = BASE_UPS * 4
         self.dx = dx
         self.dy = dy
         self.base_damage_value = damage_value / math.hypot(dx, dy)
@@ -119,8 +119,8 @@ class Bullet(Entity):
         return ["-"]
 
     def update(self, delta_multiplier, tick_interval_count):
-        self.dx *= 1 - (0.02 * delta_multiplier)
-        self.dy *= 1 - (0.2 * delta_multiplier)
+        self.dx *= 0.98**delta_multiplier
+        self.dy *= 0.8**delta_multiplier
         self.x += self.dx * delta_multiplier
         self.y += self.dy * delta_multiplier
 
@@ -196,12 +196,12 @@ class AlienMinion(Enemy):
         self.forward_speed = 0.2
 
     def update(self, delta_multiplier, tick_interval_count):
-        self.direction += math.pi/TARGET_FPS
+        self.direction += math.pi/BASE_UPS * delta_multiplier
         self.dx = self.circle_speed * math.cos(self.direction) * 1.25 # attempt to correct for
         self.dy = self.circle_speed * math.sin(self.direction) * 0.8  # char aspect ratio
-        self.x += self.dx
-        self.y += self.dy
-        self.x -= self.forward_speed
+        self.x += self.dx * delta_multiplier
+        self.y += self.dy * delta_multiplier
+        self.x -= self.forward_speed * delta_multiplier
 
     def texture(self):
         return [

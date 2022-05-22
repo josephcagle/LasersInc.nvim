@@ -2,7 +2,13 @@
 GAME_WIDTH = 80
 GAME_HEIGHT = 18
 
-TARGET_FPS = 30
+# Everything in the game will assume the game is running at BASE_UPS ups,
+# and then we will scale everything up or down using delta_multiplier
+BASE_UPS = 60
+
+TARGET_FPS = 60
+UPDATES_PER_FRAME = 3
+TARGET_UPS = TARGET_FPS * UPDATES_PER_FRAME
 
 import pynvim
 from time import sleep
@@ -194,7 +200,8 @@ class LasersInc(object):
         self.frame_buf = self.EMPTY_BUF.copy()
         self.draw_objects()
         self.render()
-        self.calc_updates()
+        for i in range(UPDATES_PER_FRAME):
+            self.calc_updates()
 
     def delete_if_requested(self, entity):
         if entity.delete_me:
@@ -238,7 +245,8 @@ class LasersInc(object):
         if self.game_paused:
             return
 
-        delta_multiplier = 1.0  # TODO: calculate based on real UPS
+        # scale everything to BASE_FPS ups
+        delta_multiplier = BASE_UPS/TARGET_UPS * 1.0  # TODO: replace 1.0 w/ calculation based on real UPS
 
         self.tick_interval_count += delta_multiplier
 
