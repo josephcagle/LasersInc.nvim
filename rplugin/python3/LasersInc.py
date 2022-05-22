@@ -75,6 +75,8 @@ class LasersInc(object):
 
         self.level = None
 
+        self.debug_text = [""]
+
 
     def print_message(self, message):
         self.nvim.command('echom "%s"\n' % message.replace('"', '\\"'))
@@ -288,6 +290,7 @@ class LasersInc(object):
                           transparent=entity.transparent)
 
         self.buf_draw(0, 0, [f"{'{0:.3}'.format(self.current_real_fps)} FPS"])
+        self.buf_draw(0, 1, self.debug_text)
 
 
     @pynvim.autocmd('User', pattern="LeftPressed")
