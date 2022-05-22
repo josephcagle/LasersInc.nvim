@@ -287,7 +287,7 @@ class LasersInc(object):
                           entity.texture(),
                           transparent=entity.transparent)
 
-        self.buf_draw(0, 0, [f"{'{0:.3g}'.format(self.current_real_fps)} FPS"])
+        self.buf_draw(0, 0, [f"{'{0:.3}'.format(self.current_real_fps)} FPS"])
 
 
     @pynvim.autocmd('User', pattern="LeftPressed")
