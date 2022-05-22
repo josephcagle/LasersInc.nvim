@@ -40,12 +40,12 @@ class LasersInc(object):
         self.prefs["controls"] = {}
 
         self.frame_num = 0
-        # basically frame_num but adjusted for real time
-        # (based on delta_multiplier each frame)
         self.tick_interval_count = 0.0
-        self.last_frame_timestamp = -1
-        self.time_since_last_frame = -1
-        self.current_real_fps = 0.0
+
+        # placeholder values so things don't break before the first frame
+        self.last_frame_timestamp = time_ns()
+        self.time_since_last_frame = 1
+        self.current_real_fps = 60
 
         self.frame_buf = []
         self.EMPTY_BUF = []
@@ -256,8 +256,11 @@ class LasersInc(object):
         if self.game_paused:
             return
 
-        # scale everything to BASE_FPS ups
-        delta_multiplier = BASE_UPS/TARGET_UPS * 1.0  # TODO: replace 1.0 w/ calculation based on real UPS
+        scale_factor = TARGET_FPS/self.current_real_fps
+        self.debug_text[0] = "{0:.3}".format(scale_factor)
+
+        # scale everything to BASE_FPS ups, then apply scale_factor
+        delta_multiplier = BASE_UPS/TARGET_UPS * scale_factor
 
         self.tick_interval_count += delta_multiplier
 
