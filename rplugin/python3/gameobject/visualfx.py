@@ -54,13 +54,33 @@ class Explosion(Particle):
             ],
             [
                 " - ",
-                "(0)",
+                "-o-",
                 " - ",
+            ],
+            [
+                " i ",
+                "-0-",
+                " i ",
+            ],
+            [
+                "oIo",
+                "<0>",
+                "oIo",
             ],
             [
                 "ooo",
                 "oXo",
                 "ooo",
+            ],
+            [
+                "o@o",
+                "@X@",
+                "o@o",
+            ],
+            [
+                "@@@",
+                "@X@",
+                "@@@",
             ],
             [
                 "...",
@@ -70,6 +90,11 @@ class Explosion(Particle):
             [
                 "   ",
                 " x ",
+                "   ",
+            ],
+            [
+                "   ",
+                " . ",
                 "   ",
             ],
         ]
@@ -92,6 +117,6 @@ class Explosion(Particle):
 
     def get_animation_frame_num(self):
         return math.floor(
-            (self.last_tick_interval_count - self.first_tick_interval_count) / 2
+            (self.last_tick_interval_count - self.first_tick_interval_count) / 3
         )
 

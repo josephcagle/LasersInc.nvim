@@ -43,7 +43,7 @@ class Spaceship(HealthyEntity):
             " ==>",
             "-/>"
         ]]
-        return_val = frames[math.floor(self.last_tick_interval_count) % 4]
+        return_val = frames[math.floor(self.last_tick_interval_count / 5) % 4]
 
         if self.dying:
             if math.floor(self.animation_progress * 100) % 30 < 15:
@@ -61,7 +61,7 @@ class Spaceship(HealthyEntity):
         super().update(delta_multiplier, tick_interval_count)
 
         if self.dying:
-            if self.animation_progress >= 1:
+            if self.animation_progress >= 1.0:
                 if self.top_laser.on:
                     self.top_laser.toggle()
                 if self.bottom_laser.on:
@@ -69,7 +69,7 @@ class Spaceship(HealthyEntity):
                 self.delete_me = True
                 self.on_death()
                 return
-            self.animation_progress += 1/10 * delta_multiplier
+            self.animation_progress += delta_multiplier/60
 
         if self.top_laser.on:
             self.capacitor_charge -= 0.2
