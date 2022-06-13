@@ -9,6 +9,25 @@ let &runtimepath.=','.escape(expand('<sfile>:p:h'), '\,')
 " register our python code
 autocmd VimEnter * call s:startTheGame()
 
+
+" highlight groups for game visuals
+highlight LasersIncBlack       ctermfg=Black
+highlight LasersIncDarkBlue    ctermfg=DarkBlue
+highlight LasersIncDarkGreen   ctermfg=DarkGreen
+highlight LasersIncDarkCyan    ctermfg=DarkCyan
+highlight LasersIncDarkRed     ctermfg=DarkRed
+highlight LasersIncDarkMagenta ctermfg=DarkMagenta
+highlight LasersIncBrown       ctermfg=Brown
+highlight LasersIncGray        ctermfg=Gray
+highlight LasersIncDarkGray    ctermfg=DarkGray
+highlight LasersIncBlue        ctermfg=Blue
+highlight LasersIncGreen       ctermfg=Green
+highlight LasersIncCyan        ctermfg=Cyan
+highlight LasersIncRed         ctermfg=Red
+highlight LasersIncMagenta     ctermfg=Magenta
+highlight LasersIncYellow      ctermfg=Yellow
+highlight LasersIncWhite       ctermfg=White
+
 " highlight groups for statusline
 highlight StatusLine ctermfg=DarkGray ctermbg=White
 highlight StatusLineTitle ctermfg=Black ctermbg=Gray
