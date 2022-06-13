@@ -1,0 +1,1 @@
+while true; do nvim -u LasersInc.nvim -c 'nnoremap <C-q> :qa!<CR>' ; sleep 1 ; done
