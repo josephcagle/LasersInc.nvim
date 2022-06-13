@@ -6,6 +6,8 @@ from base.entities import Entity, HealthyEntity
 from base.visualfx import Particle
 from gameobject.visualfx import Explosion
 
+from sound.sound import SOUND_SUPPORTED, SoundManager
+
 class Spaceship(HealthyEntity):
     def __init__(self):
         super().__init__(5, 8, 3, 3, 100)
@@ -21,6 +23,8 @@ class Spaceship(HealthyEntity):
         self.dying = False
         self.animation_progress = 0.0
         self.on_death = None
+
+        self.sound_manager = SoundManager() if SOUND_SUPPORTED else None
 
     def texture(self):
         frames = [ [
@@ -90,6 +94,9 @@ class Spaceship(HealthyEntity):
         bullet.parent = self
         self.bullets.append(bullet)
         self.children.append(bullet)
+
+        if SOUND_SUPPORTED:
+            self.sound_manager.play_sound("tnt")
 
     def toggle_top_laser(self):
         self.top_laser.toggle()
