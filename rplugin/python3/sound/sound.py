@@ -9,7 +9,8 @@ class SoundManager:
         if not SOUND_SUPPORTED:
             raise RuntimeError("sound not supported: playsound module not available")
         self.sounds = {
-            "shoot_bullet": "data/sound/shoot_bullet.wav"
+            "shoot_bullet": "data/sound/shoot_bullet.wav",
+            "explosion1": "data/sound/explosion1.wav"
         }
 
     def play_sound(self, sound_name):

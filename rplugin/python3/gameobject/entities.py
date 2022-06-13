@@ -109,6 +109,9 @@ class Spaceship(HealthyEntity):
         expl.parent = self
         self.children.append(expl)
 
+        if SOUND_SUPPORTED:
+            self.sound_manager.play_sound("explosion1")
+
     def on_event(self, event_type, *data):
         if event_type == "intersection" and isinstance(data[0], Enemy):
             self.die()
