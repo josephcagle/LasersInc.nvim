@@ -96,7 +96,7 @@ class Spaceship(HealthyEntity):
         self.children.append(bullet)
 
         if SOUND_SUPPORTED:
-            self.sound_manager.play_sound("tnt")
+            self.sound_manager.play_sound("shoot_bullet")
 
     def toggle_top_laser(self):
         self.top_laser.toggle()
