@@ -2,7 +2,7 @@
 import math
 
 from LasersInc import GAME_HEIGHT, GAME_WIDTH
-from base.visualfx import Particle, ParallaxBackground
+from base.visualfx import Highlight, Particle, ParallaxBackground
 
 
 from random import random
@@ -61,37 +61,71 @@ class Explosion(Particle):
                 " i ",
                 "-0-",
                 " i ", ],
-              "highlights": [] },
+              "highlights": [
+                  Highlight("LasersIncRed", 1, 1, 2)
+              ] },
             { "lines": [
                 "oIo",
                 "<0>",
                 "oIo", ],
-              "highlights": [] },
+              "highlights": [
+                  Highlight("LasersIncDarkGray", 0, 0, 3),
+                  Highlight("LasersIncYellow", 0, 1, 2),
+                  Highlight("LasersIncYellow", 1, 0, 3),
+                  Highlight("LasersIncRed", 1, 1, 2),
+                  Highlight("LasersIncYellow", 2, 1, 2),
+                  Highlight("LasersIncDarkGray", 2, 0, 3),
+              ] },
             { "lines": [
                 "ooo",
                 "oXo",
                 "ooo", ],
-              "highlights": [] },
+              "highlights": [
+                  Highlight("LasersIncDarkGray", 0, 0, 3),
+                  Highlight("LasersIncRed", 1, 1, 2),
+                  Highlight("LasersIncDarkGray", 2, 0, 3),
+              ] },
             { "lines": [
                 "o@o",
                 "@X@",
                 "o@o", ],
-              "highlights": [] },
+              "highlights": [
+                  Highlight("LasersIncDarkGray", 0, 0, 3),
+                  Highlight("LasersIncYellow", 0, 1, 2),
+                  Highlight("LasersIncYellow", 1, 0, 3),
+                  Highlight("LasersIncRed", 1, 1, 2),
+                  Highlight("LasersIncYellow", 2, 1, 2),
+                  Highlight("LasersIncDarkGray", 2, 0, 3),
+              ] },
             { "lines": [
                 "@@@",
                 "@X@",
                 "@@@", ],
-              "highlights": [] },
+              "highlights": [
+                  Highlight("LasersIncYellow", 0, 0, 3),
+                  Highlight("LasersIncYellow", 1, 0, 3),
+                  Highlight("LasersIncYellow", 2, 0, 3),
+                  Highlight("LasersIncRed", 1, 1, 2),
+              ] },
             { "lines": [
                 "...",
                 ".x.",
                 "...", ],
-              "highlights": [] },
+              "highlights": [
+                  Highlight("LasersIncDarkGray", 0, 0, 3),
+                  Highlight("LasersIncYellow", 0, 1, 2),
+                  Highlight("LasersIncYellow", 1, 0, 3),
+                  Highlight("LasersIncRed", 1, 1, 2),
+                  Highlight("LasersIncYellow", 2, 1, 2),
+                  Highlight("LasersIncDarkGray", 2, 0, 3),
+              ] },
             { "lines": [
                 "   ",
                 " x ",
                 "   ", ],
-              "highlights": [] },
+              "highlights": [
+                  Highlight("LasersIncRed", 1, 1, 2)
+              ] },
             { "lines": [
                 "   ",
                 " . ",
