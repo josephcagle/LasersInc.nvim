@@ -47,65 +47,73 @@ class Explosion(Particle):
         self.disable_hitbox = True
 
         self.frames = [
-            [
+            { "lines": [
                 "   ",
                 " o ",
-                "   ",
-            ],
-            [
+                "   ", ],
+              "highlights": [] },
+            { "lines": [
                 " - ",
                 "-o-",
-                " - ",
-            ],
-            [
+                " - ", ],
+              "highlights": [] },
+            { "lines": [
                 " i ",
                 "-0-",
-                " i ",
-            ],
-            [
+                " i ", ],
+              "highlights": [] },
+            { "lines": [
                 "oIo",
                 "<0>",
-                "oIo",
-            ],
-            [
+                "oIo", ],
+              "highlights": [] },
+            { "lines": [
                 "ooo",
                 "oXo",
-                "ooo",
-            ],
-            [
+                "ooo", ],
+              "highlights": [] },
+            { "lines": [
                 "o@o",
                 "@X@",
-                "o@o",
-            ],
-            [
+                "o@o", ],
+              "highlights": [] },
+            { "lines": [
                 "@@@",
                 "@X@",
-                "@@@",
-            ],
-            [
+                "@@@", ],
+              "highlights": [] },
+            { "lines": [
                 "...",
                 ".x.",
-                "...",
-            ],
-            [
+                "...", ],
+              "highlights": [] },
+            { "lines": [
                 "   ",
                 " x ",
-                "   ",
-            ],
-            [
+                "   ", ],
+              "highlights": [] },
+            { "lines": [
                 "   ",
                 " . ",
-                "   ",
-            ],
+                "   ", ],
+              "highlights": [] },
         ]
 
     def texture(self):
         if self.first_tick_interval_count < 0: return [""]
         num = self.get_animation_frame_num()
         if 0 <= num < len(self.frames):
-            return self.frames[num]
+            return self.frames[num]["lines"]
         else:
             return [""]
+
+    def highlights(self):
+        if self.first_tick_interval_count < 0: return []
+        num = self.get_animation_frame_num()
+        if 0 <= num < len(self.frames):
+            return self.frames[num]["highlights"]
+        else:
+            return []
 
     def update(self, delta_multiplier, tick_interval_count):
         super().update(delta_multiplier, tick_interval_count)
