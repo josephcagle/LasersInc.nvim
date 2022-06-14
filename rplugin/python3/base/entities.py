@@ -10,6 +10,7 @@ class Entity:
         self.transparent = transparent
         self.texture_offset_x = 0
         self.texture_offset_y = 0
+        self.highlights = []
         self.z_order = 0
         self.disable_hitbox = False
         self.delete_me = False

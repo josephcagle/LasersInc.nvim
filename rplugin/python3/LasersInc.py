@@ -169,6 +169,37 @@ class LasersInc(object):
     def render(self):
         self.nvim.current.buffer[0:GAME_HEIGHT] = self.frame_buf
 
+        for entity in self.entities:
+            for highlight in entity.highlights:
+                highlight_line_num = highlight.line_num \
+                    + math.floor(entity.y)                     \
+                    + entity.texture_offset_y
+                if highlight_line_num < 0 or highlight_line_num >= GAME_HEIGHT:
+                    continue
+
+                highlight_col_start = highlight.col_start \
+                    + math.floor(entity.x) \
+                    + entity.texture_offset_x
+                if highlight_col_start < 0:
+                    highlight_col_start = 0
+                if highlight_col_start > GAME_WIDTH:
+                    continue
+
+                highlight_col_end = highlight.col_end \
+                    + math.floor(entity.x) \
+                    + entity.texture_offset_x
+                if highlight_col_end < 0:
+                    continue
+                if highlight_col_end > GAME_WIDTH:
+                    highlight_col_end = GAME_WIDTH
+
+                self.nvim.api.buf_add_highlight(0, -1,
+                    highlight.highlight_group,
+                    highlight_line_num,
+                    highlight_col_start,
+                    highlight_col_end
+                )
+
     def buf_draw(self, x, y, lines, transparent=False):
         x = math.floor(x)
         y = math.floor(y)
