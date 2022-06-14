@@ -170,8 +170,8 @@ class LasersInc(object):
         self.nvim.current.buffer[0:GAME_HEIGHT] = self.frame_buf
 
     def buf_draw(self, x, y, lines, transparent=False):
-        x = int(x)
-        y = int(y)
+        x = math.floor(x)
+        y = math.floor(y)
 
         # guarantee at least part of the sprite is on-screen
         if y > GAME_HEIGHT or x > GAME_WIDTH:
