@@ -96,7 +96,7 @@ class LasersInc(object):
         prefs_file = open("data/game_controls.properties", "r")
         lines = prefs_file.readlines()
 
-        self.nvim.command("source disable.vim")
+        # self.nvim.command("source disable.vim")
 
         for line in lines:
             if line.startswith("#") or len(line.strip()) == 0:
