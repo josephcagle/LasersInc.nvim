@@ -88,6 +88,10 @@ class LasersInc(object):
 
 
     def print_message(self, message):
+        if '\n' in message:
+            message_lines = message.split('\n')
+            for line in message_lines:
+                self.nvim.command('echom "%s"\n' % line.replace('"', '\\"'))
         self.nvim.command('echom "%s"\n' % message.replace('"', '\\"'))
     ## test
     # self.printMessage('"ain\'t it workin\' yet?"')
