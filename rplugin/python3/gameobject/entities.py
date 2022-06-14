@@ -23,13 +23,6 @@ class Spaceship(HealthyEntity):
         self.dying = False
         self.animation_progress = 0.0
         self.on_death = None
-        self.highlights = [
-            Highlight("LasersIncBlue", 1, 1, 3),
-            Highlight("LasersIncBlue", 0, 1, 2),
-            Highlight("LasersIncBlue", 2, 1, 2),
-            Highlight("LasersIncYellow", 0, 0, 1),
-            Highlight("LasersIncYellow", 2, 0, 1),
-        ]
 
         self.sound_manager = SoundManager() if SOUND_SUPPORTED else None
 
@@ -63,6 +56,15 @@ class Spaceship(HealthyEntity):
                 return return_val
 
         return return_val
+
+    def highlights(self):
+        return [
+            Highlight("LasersIncBlue", 1, 1, 3),
+            Highlight("LasersIncBlue", 0, 1, 2),
+            Highlight("LasersIncBlue", 2, 1, 2),
+            Highlight("LasersIncYellow", 0, 0, 1),
+            Highlight("LasersIncYellow", 2, 0, 1),
+        ]
 
     def update(self, delta_multiplier, tick_interval_count):
         self.last_tick_interval_count = tick_interval_count

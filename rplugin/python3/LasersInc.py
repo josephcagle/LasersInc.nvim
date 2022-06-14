@@ -170,7 +170,7 @@ class LasersInc(object):
         self.nvim.current.buffer[0:GAME_HEIGHT] = self.frame_buf
 
         for entity in self.entities:
-            for highlight in entity.highlights:
+            for highlight in entity.highlights():
                 highlight_line_num = highlight.line_num \
                     + math.floor(entity.y)                     \
                     + entity.texture_offset_y
