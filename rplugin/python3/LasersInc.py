@@ -84,7 +84,7 @@ class LasersInc(object):
     def menu_selection_handler(self):
         self.menu.hide()
         if SOUND_SUPPORTED:
-            self.sound_manager.pause_music()
+            self.sound_manager.fade_out_music(1000)
 
 
     def print_message(self, message):

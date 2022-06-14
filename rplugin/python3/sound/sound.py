@@ -34,5 +34,6 @@ class SoundManager:
         return mixer.music.get_busy()
     def set_music_volume(self, volume_fraction):
         mixer.music.set_volume(volume_fraction)
-
+    def fade_out_music(self, time_ms):
+        mixer.music.fadeout(time_ms)  # blocking
 
