@@ -176,7 +176,11 @@ class LasersInc(object):
 
         self.nvim.current.buffer[0:GAME_HEIGHT] = self.frame_buf
 
-        for entity in self.entities:
+        for entity in \
+            sorted(
+                self.entities.get_all_in_tree(),
+                key = lambda entity: entity.z_order
+            ):
             for highlight in entity.highlights():
                 highlight_line_num = highlight.line_num \
                     + math.floor(entity.y) \
