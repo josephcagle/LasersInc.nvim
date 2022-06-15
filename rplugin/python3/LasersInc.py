@@ -304,9 +304,8 @@ class LasersInc(object):
                 # (TODO: maybe rename the method later)
                 entity.on_event("intersection", other_entity)
 
-        if len(entity.children) > 0:
-            for child in entity.children:
-                self.update_entity(child, delta_multiplier, tick_interval_count)
+        for child in entity.children:
+            self.update_entity(child, delta_multiplier, tick_interval_count)
 
 
     def calc_updates(self):
