@@ -53,6 +53,7 @@ class LasersInc(object):
         self.EMPTY_BUF = []
         for i in builtins.range(GAME_HEIGHT):
             self.EMPTY_BUF.append(" "*GAME_WIDTH)
+        self.highlight_namespace_id = self.nvim.api.create_namespace("LasersInc")
 
         self.running = False
 
@@ -171,12 +172,14 @@ class LasersInc(object):
 
 
     def render(self):
+        self.nvim.api.buf_clear_namespace(0, self.highlight_namespace_id, 0,-1)
+
         self.nvim.current.buffer[0:GAME_HEIGHT] = self.frame_buf
 
         for entity in self.entities:
             for highlight in entity.highlights():
                 highlight_line_num = highlight.line_num \
-                    + math.floor(entity.y)                     \
+                    + math.floor(entity.y) \
                     + entity.texture_offset_y
                 if highlight_line_num < 0 or highlight_line_num >= GAME_HEIGHT:
                     continue
@@ -197,7 +200,8 @@ class LasersInc(object):
                 if highlight_col_end > GAME_WIDTH:
                     highlight_col_end = GAME_WIDTH
 
-                self.nvim.api.buf_add_highlight(0, -1,
+                self.nvim.api.buf_add_highlight(0,
+                    self.highlight_namespace_id,
                     highlight.highlight_group,
                     highlight_line_num,
                     highlight_col_start,
