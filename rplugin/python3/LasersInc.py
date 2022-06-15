@@ -19,7 +19,7 @@ import builtins
 import sys, os
 sys.path.append(f"{os.getcwd()}/rplugin/python3")
 
-from sound.sound import SoundManager, SOUND_SUPPORTED
+from sound.sound import SoundManager
 
 from gameobject.entities import Spaceship, AlienMinion
 from gameobject.visualfx import Starfield
@@ -66,7 +66,7 @@ class LasersInc(object):
 
         self.game_paused = False
 
-        self.sound_manager = SoundManager() if SOUND_SUPPORTED else None
+        self.sound_manager = SoundManager()
 
         self.menu = Menu(
             self.nvim,
@@ -84,8 +84,7 @@ class LasersInc(object):
 
     def menu_selection_handler(self):
         self.menu.hide()
-        if SOUND_SUPPORTED:
-            self.sound_manager.fade_out_music(1000)
+        self.sound_manager.fade_out_music(1000)
 
 
     def print_message(self, message):
@@ -154,10 +153,9 @@ class LasersInc(object):
 
         self.menu.show()
 
-        if SOUND_SUPPORTED:
-            self.sound_manager.load_music("main_menu")
-            self.sound_manager.set_music_volume(0.5)
-            self.sound_manager.play_music(loop=True)
+        self.sound_manager.load_music("main_menu")
+        self.sound_manager.set_music_volume(0.5)
+        self.sound_manager.play_music(loop=True)
 
         self.running = True
         while self.running:

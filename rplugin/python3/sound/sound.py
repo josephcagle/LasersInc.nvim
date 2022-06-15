@@ -1,14 +1,9 @@
 
-import importlib
-SOUND_SUPPORTED = importlib.util.find_spec("pygame") is not None
-if SOUND_SUPPORTED:
-    from pygame import mixer
-    mixer.init()
+from pygame import mixer
+mixer.init()
 
 class SoundManager:
     def __init__(self):
-        if not SOUND_SUPPORTED:
-            raise RuntimeError("sound not supported: playsound module not available")
         self.sounds = {
             "shoot_bullet": mixer.Sound("data/sound/shoot_bullet.wav"),
             "explosion1": mixer.Sound("data/sound/explosion1.wav")
