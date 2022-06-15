@@ -1,8 +1,24 @@
 
 if !has("python3")
-    echoerr "Python 3 support required. Exiting"
+    echoerr "Python 3 support required. Please install python3 and the pynvim package."
     finish
 endif
+
+python3 << END_PYTHON
+
+import importlib
+dependencies = ['pynvim', 'pygame', 'pyfxr']
+uninstalled = []
+for package in dependencies:
+    if importlib.util.find_spec(package) is None:
+        uninstalled.append(package)
+if len(uninstalled) > 0:
+    import vim
+    vim.command('echom("Please install python3 package(s): ' + ', '.join(uninstalled) + ' ")')
+    vim.command('call input("(press enter to quit)")')
+    vim.command('q')
+
+END_PYTHON
 
 " add cwd to runtimepath
 let &runtimepath.=','.escape(expand('<sfile>:p:h'), '\,')
