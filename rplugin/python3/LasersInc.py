@@ -334,8 +334,8 @@ class LasersInc(object):
 
 
     def draw_objects(self):
-        for i in range(len(self.background_layers)):
-            self.buf_draw(0, 0, self.background_layers[i].lines(), transparent=True)
+        for background_layer in self.background_layers:
+            self.buf_draw(0, 0, background_layer.lines(), transparent=True)
 
         # self.buf_draw(0, 0, ['frame %s' % self.frame_num], transparent=True)
 
