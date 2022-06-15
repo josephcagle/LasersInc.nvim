@@ -8,6 +8,8 @@ from gameobject.visualfx import Explosion
 
 from sound.sound import SOUND_SUPPORTED, SoundManager
 
+sound_manager = SoundManager() if SOUND_SUPPORTED else None
+
 class Spaceship(HealthyEntity):
     def __init__(self):
         super().__init__(5, 8, 3, 3, 100)
@@ -23,8 +25,6 @@ class Spaceship(HealthyEntity):
         self.dying = False
         self.animation_progress = 0.0
         self.on_death = None
-
-        self.sound_manager = SoundManager() if SOUND_SUPPORTED else None
 
     def texture(self):
         frames = [ [
@@ -105,7 +105,7 @@ class Spaceship(HealthyEntity):
         self.children.append(bullet)
 
         if SOUND_SUPPORTED:
-            self.sound_manager.play_sound("shoot_bullet")
+            sound_manager.play_sound("shoot_bullet")
 
     def toggle_top_laser(self):
         self.top_laser.toggle()
@@ -119,7 +119,7 @@ class Spaceship(HealthyEntity):
         self.children.append(expl)
 
         if SOUND_SUPPORTED:
-            self.sound_manager.play_sound("explosion1")
+            sound_manager.play_sound("explosion1")
 
     def on_event(self, event_type, *data):
         if event_type == "intersection" and isinstance(data[0], Enemy):
@@ -162,6 +162,9 @@ class Bullet(Entity):
             expl = Explosion(self.x-1, self.y-1, self.z_order+1)
             expl.parent = self
             self.children.append(expl)
+
+            if SOUND_SUPPORTED:
+                sound_manager.play_sound("explosion1")
 
             self.delete_me = True
 
