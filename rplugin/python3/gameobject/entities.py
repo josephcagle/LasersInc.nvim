@@ -137,6 +137,9 @@ class Bullet(Entity):
     def texture(self):
         return ["-"]
 
+    def highlights(self):
+        return [Highlight("LasersIncGreen", 0, 0, 1)]
+
     def update(self, delta_multiplier, tick_interval_count):
         self.dx *= 0.98**delta_multiplier
         self.dy *= 0.8**delta_multiplier
