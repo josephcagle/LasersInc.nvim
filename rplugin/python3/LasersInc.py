@@ -162,7 +162,12 @@ class LasersInc(object):
         self.running = True
         while self.running:
             self.nvim.command('doautocmd User GameTick')
-            sleep(1 / TARGET_FPS)
+
+            last_frame_len = \
+              self.last_frame_end_timestamp - self.last_frame_start_timestamp
+            sleep(
+                max((1 / TARGET_FPS) - (last_frame_len / 1e9), 0)
+            )
 
 
 
