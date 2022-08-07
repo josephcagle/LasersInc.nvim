@@ -45,8 +45,10 @@ class LasersInc(object):
         self.tick_interval_count = 0.0
 
         # placeholder values so things don't break before the first frame
-        self.last_frame_timestamp = time_ns()
-        self.time_since_last_frame = 1
+        self.last_frame_start_timestamp = time_ns()
+        self.last_frame_end_timestamp = time_ns() + 1
+        self.time_since_last_frame_start = 1
+        self.time_since_last_frame_end = 1
         self.current_real_fps = 60
 
         self.frame_buf = []
@@ -258,9 +260,9 @@ class LasersInc(object):
     @pynvim.autocmd('User', pattern='GameTick', sync=True)
     def on_game_tick(self, *args):
         now = time_ns()
-        self.time_since_last_frame = now - self.last_frame_timestamp
-        self.last_frame_timestamp = now
-        self.current_real_fps = 1e9 / self.time_since_last_frame
+        self.time_since_last_frame_start = now - self.last_frame_start_timestamp
+        self.last_frame_start_timestamp = now
+        self.current_real_fps = 1e9 / self.time_since_last_frame_start
 
         self.frame_num += 1
         self.frame_buf = self.EMPTY_BUF.copy()
@@ -268,6 +270,10 @@ class LasersInc(object):
         self.render()
         for i in range(UPDATES_PER_FRAME):
             self.calc_updates()
+
+        now = time_ns()
+        self.last_frame_end_timestamp = now
+        self.time_since_last_frame_end = now - self.last_frame_end_timestamp
 
     def delete_if_requested(self, entity):
         if entity.delete_me:
