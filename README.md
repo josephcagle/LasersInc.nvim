@@ -18,7 +18,7 @@ nvim -u LasersInc.nvim -c 'nnoremap <C-c> :qa!<CR>'
 ```
 Press Ctrl-C to exit.
 
- - Edit rplugin/python3/LasersInc.py and change the `TARGET_FPS` to get a
+ - Edit `rplugin/python3/LasersInc.py` and change the `TARGET_FPS` to get a
    different framerate. The actual framerate will be lower (adjusting for this
    is on my to-do list).
 
