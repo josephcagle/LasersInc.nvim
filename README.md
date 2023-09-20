@@ -21,6 +21,7 @@ Press Ctrl-C to exit.
  - Edit `rplugin/python3/LasersInc.py` and change the `TARGET_FPS` to get a
    different framerate. The actual framerate will be lower (adjusting for this
    is on my to-do list).
+   - The game area's width and height can also be changed.
 
 ## Controls
 
@@ -36,7 +37,13 @@ toggle the top and bottom lasers, respectively.
    spacebar would make sense, though.
 
 ## Development status
+
 This project is basically in MVP/alpha stage. There's currently sort of an
 infinite-survival challenge you can play, but the game needs some new enemies,
-some levels and a game lifecycle (death, gameover, etc.).
+some levels and a game lifecycle (death, gameover, etc.). My end goal is to
+implement network multiplayer once the game system is more stable.
+
+I originally envisioned a full-scale story mode, perhaps involving a
+corporation that sells lasers. There's probably also room for some vim-based
+humor and 4th-wall breaking.
 
