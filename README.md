@@ -1,6 +1,8 @@
 
 # Lasers, Inc.
-A game for Vim, because why should Emacs have all the fun?
+**A side-scrolling shoot-'em-up inside Neovim**
+
+*... because why should Emacs have all the fun?*
 
 I was in the mood to play a game in my terminal the other day, only to realize
 that all the fun games are inside Emacs. This project attempts to remedy this
