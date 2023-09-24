@@ -29,7 +29,7 @@ Press Ctrl-C to exit.
 
 Controls can be configured in `/data/game_controls.properties`. By default, the
 ship is controlled via <kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd>.
-<kbd>Space</kbd> triggers the main cannon and <kbd>O</kbd> and <kbd>o</kbd>
+<kbd>Space</kbd> triggers the main cannon and (uppercase) <kbd>O</kbd> and (lowercase) <kbd>o</kbd>
 toggle the top and bottom lasers, respectively.
 
  - Because the game uses vim keyboard inputs, multiple control keys cannot be
@@ -48,4 +48,7 @@ implement network multiplayer once the game system is more stable.
 I originally envisioned a full-scale story mode, perhaps involving a
 corporation that sells lasers. There's probably also room for some vim-based
 humor and 4th-wall breaking.
+
+Eventually, the core of the game could potentially be split off into its own
+vim-based terminal game engine project.
 
