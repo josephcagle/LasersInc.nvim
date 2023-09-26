@@ -1,13 +1,13 @@
 
-GAME_WIDTH = 80
-GAME_HEIGHT = 18
+GAME_WIDTH = 100
+GAME_HEIGHT = 30
 
 # Everything in the game will assume the game is running at BASE_UPS ups,
 # and then we will scale everything up or down using delta_multiplier.
 # DON'T change this from 60 without redoing all the code to adjust
 BASE_UPS = 60
 
-TARGET_FPS = 60
+TARGET_FPS = 160
 UPDATES_PER_FRAME = 3
 TARGET_UPS = TARGET_FPS * UPDATES_PER_FRAME
 
@@ -357,7 +357,7 @@ class LasersInc(object):
                           entity.texture(),
                           transparent=entity.transparent)
 
-        self.buf_draw(0, 0, [f"{'{0:.3}'.format(self.current_real_fps)} FPS"])
+        self.buf_draw(0, 0, [f"{'{0:.4}'.format(self.current_real_fps)} FPS"])
         self.buf_draw(0, 1, self.debug_text)
 
 
